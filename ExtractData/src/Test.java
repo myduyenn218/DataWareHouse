@@ -5,13 +5,13 @@ import java.sql.SQLException;
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-		String jdbcURL_1 = "jdbc:mysql://localhost/datawarehouse?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		String userName_1 = "root";
-		String password_1 = "";
+		String jdbcURL_1 = "jdbc:mysql://localhost/dw-extractdb?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		String userName_1 = "admin";
+		String password_1 = "admin";
 
-		String jdbcURL_2 = "jdbc:mysql://localhost/datacopy?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		String userName_2 = "root";
-		String password_2 = "";
+		String jdbcURL_2 = "jdbc:mysql://localhost/dw-extractdb-2?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+		String userName_2 = "admin";
+		String password_2 = "admin";
 
 		String urlFile = "information.csv";
 
@@ -21,6 +21,6 @@ public class Test {
 		ExtractData ex = new ExtractData(connectionDB1, connectionDB2);
 
 		ex.load(",", urlFile);
-		ex.copy("datawarehouse", "information", "datacopy", "info");
+		ex.copy("datawarehouse", "information", "dw-extractdb-2", "info");
 	}
 }
