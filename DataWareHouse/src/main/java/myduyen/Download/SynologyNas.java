@@ -207,23 +207,6 @@ public class SynologyNas {
 		return md5;
 	}
 
-	public String getDigest(String pathFile, int byteArraySize) throws NoSuchAlgorithmException, IOException {
-
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		md.reset();
-		InputStream is = new FileInputStream(pathFile);
-
-		byte[] bytes = new byte[byteArraySize];
-		int numBytes;
-		while ((numBytes = is.read(bytes)) != -1) {
-			md.update(bytes, 0, numBytes);
-		}
-		is.close();
-		byte[] digest = md.digest();
-		String result = new String(Hex.encodeHex(digest));
-		return result;
-	}
-
 	public boolean download(String remoteFile, String localFile) {
 		if (!isLoggedIn) {
 			if (!login()) {
