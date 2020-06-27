@@ -1,14 +1,18 @@
 package myduyen.Download;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Hex;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -109,6 +113,7 @@ public class SynologyNas {
 		params.put("limit", "" + limit);
 		params.put("sort_by", sortBy);
 		params.put("sort_direction", sortDirection);
+		params.put("additional", "time");
 
 		final Response response = getResponse(url, params);
 
@@ -125,11 +130,98 @@ public class SynologyNas {
 			final String path = (String) ((JSONObject) file).get("path");
 			final String name = (String) ((JSONObject) file).get("name");
 			final boolean isDir = (Boolean) ((JSONObject) file).get("isdir");
+			final JSONObject additional = (JSONObject) ((JSONObject) file).get("additional");
 
-			filePaths.add(new RemoteFile(name, path, isDir));
+			final JSONObject time = (JSONObject) additional.get("time");
+			final long mTime = (Long) time.get("mtime");
+			filePaths.add(new RemoteFile(name, path, isDir, mTime));
 		}
 
 		return filePaths;
+	}
+
+	public String getMD5(String path) {
+		if (!isLoggedIn) {
+			if (!login()) {
+				return null;
+			}
+		}
+
+		final ArrayList<String> apiInfo = retriveInfo("SYNO.FileStation.List");
+
+		final String url = this.baseUrl + "/" + apiInfo.get(1);
+		final LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
+		params.put("api", "SYNO.FileStation.MD5");
+		params.put("_sid", sid);
+		params.put("version", apiInfo.get(0));
+		params.put("method", "start");
+		params.put("file_path", path);
+		Response response = getResponse(url, params);
+
+		if (response.isSuccess() == false) {
+			System.out.println(response.getErrorCode());
+			return null;
+		}
+
+		JSONObject data = response.getData();
+		final String taskid = "\"" + (String) data.get("taskid") + "\"";
+		// set taskid
+		String md5;
+		while (true) {
+			params.clear();
+			params.put("api", "SYNO.FileStation.MD5");
+			params.put("_sid", sid);
+			params.put("version", apiInfo.get(0));
+			params.put("method", "status");
+			params.put("taskid", taskid);
+			response = getResponse(url, params);
+
+			if (response.isSuccess() == false) {
+				System.out.println(response.getErrorCode());
+				return null;
+			}
+
+			data = response.getData();
+
+			final boolean finished = (Boolean) data.get("finished");
+			if (finished) {
+				md5 = (String) data.get("md5");
+				break;
+			}
+
+		}
+//		// stop
+//		params.clear();
+//		params.put("api", "SYNO.FileStation.MD5");
+//		params.put("_sid", sid);
+//		params.put("version", apiInfo.get(0));
+//		params.put("method", "stop");
+//		params.put("taskid", taskid);
+//		response = getResponse(url, params);
+//
+//		if (response.isSuccess() == false) {
+//			System.out.println(response.getErrorCode());
+//			return null;
+//		}
+
+		return md5;
+	}
+
+	public String getDigest(String pathFile, int byteArraySize) throws NoSuchAlgorithmException, IOException {
+
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.reset();
+		InputStream is = new FileInputStream(pathFile);
+
+		byte[] bytes = new byte[byteArraySize];
+		int numBytes;
+		while ((numBytes = is.read(bytes)) != -1) {
+			md.update(bytes, 0, numBytes);
+		}
+		is.close();
+		byte[] digest = md.digest();
+		String result = new String(Hex.encodeHex(digest));
+		return result;
 	}
 
 	public boolean download(String remoteFile, String localFile) {
@@ -158,19 +250,20 @@ public class SynologyNas {
 class FileDownloadResponseHandler implements ResponseHandler {
 	private String filname;
 	public boolean isSuccess;
-	
+
 	public FileDownloadResponseHandler(String filname) {
 		this.filname = filname;
 	}
-	
+
 	public void handle(InputStream is) {
 		try {
 			byte[] buffer = new byte[1024];
 			File targetFile = new File(filname);
 			OutputStream outStream = new FileOutputStream(targetFile);
 			int size = 0;
-			while ((size = is.read(buffer)) > 0) {
+			while ((size = is.read(buffer)) != -1) {
 				outStream.write(buffer, 0, size);
+				outStream.flush();
 			}
 
 			isSuccess = true;
