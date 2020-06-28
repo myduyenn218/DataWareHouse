@@ -92,7 +92,7 @@ public class DownloadFileServer {
 		SynologyNas nas = new SynologyNas(url, username, password);
 		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
 
-		sql = "SELECT updated_at FROM logs WHERE id_filename =?";
+		sql = "SELECT time_download FROM logs WHERE id_filename =?";
 		PreparedStatement pre = null;
 		// lấy ra từng file trong data trên server
 
@@ -114,7 +114,7 @@ public class DownloadFileServer {
 					if (re.getRow() == 1) {
 						re.beforeFirst();
 						re.first();
-						Timestamp mTimeLocal = re.getTimestamp("updated_at");
+						Timestamp mTimeLocal = re.getTimestamp("time_download");
 						// đã tải rồi thì kiểm tra xem có cần cập nhật không bằng cách so sánh date time
 						if (mTimeLocal.before(new Timestamp(file.getModifyTime()))) {
 							boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
@@ -144,18 +144,36 @@ public class DownloadFileServer {
 	}
 
 	public DownloadFileServer() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-		ses.scheduleAtFixedRate(new Runnable() {
-		    @Override
-		    public void run() {
-		      run();
-		    }
-		}, 0, 1, TimeUnit.HOURS);
+
+//		run();
 	}
 
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		new DownloadFileServer();
-
+		DownloadFileServer d = new DownloadFileServer();
+		System.out.println("aaaaa");
+		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+		ses.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					d.run();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}, 0, 1, TimeUnit.MINUTES);
+		while(true) {}
+//		System.out.println("bbbb");
 	}
 }
