@@ -8,11 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import ExtractData.DBConnection;
+import config.DBConnection;
+import config.ReadProperties;
 
 /**
  * App
@@ -148,32 +145,4 @@ public class DownloadFileServer {
 //		run();
 	}
 
-	public static void main(String[] args)
-			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		DownloadFileServer d = new DownloadFileServer();
-		System.out.println("aaaaa");
-		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-		ses.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					d.run();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}, 0, 1, TimeUnit.MINUTES);
-		while(true) {}
-//		System.out.println("bbbb");
-	}
 }

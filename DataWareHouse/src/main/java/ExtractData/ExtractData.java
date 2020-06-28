@@ -19,6 +19,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import config.DBConnection;
+
 public class ExtractData {
 
 	private Connection connectionDB1;
@@ -47,7 +49,8 @@ public class ExtractData {
 
 				return true;
 			} else {
-				String creatTable = "CREATE TABLE Sinhvien(STT VARCHAR(255), Mssv VARCHAR(255),Hlt VARCHAR(255),Tn VARCHAR(255),Ngysinh VARCHAR(255),Mlp VARCHAR(255),Tnlp VARCHAR(255),Tlinlc VARCHAR(255),Email VARCHAR(255),QuQun VARCHAR(255),Ghich VARCHAR(255))";
+				String creatTable = "CREATE TABLE " + tableName
+						+ "(STT BIGINT PRIMARY KEY AUTO_INCREMENT, Mssv VARCHAR(255),Hlt VARCHAR(255),Tn VARCHAR(255),Ngysinh VARCHAR(255),Mlp VARCHAR(255),Tnlp VARCHAR(255),Tlinlc VARCHAR(255),Email VARCHAR(255),QuQun VARCHAR(255),Ghich VARCHAR(255))";
 				PreparedStatement preparedStatement = con.prepareStatement(creatTable);
 				preparedStatement.execute();
 				System.out.println("Create table Successfully :)");
@@ -71,10 +74,11 @@ public class ExtractData {
 		Row row;
 		Cell cell;
 		StringBuffer stb;
-		int i = 1, j = 11;
+		int i = 1, j = 10;
 
 		stb = new StringBuffer("INSERT INTO ");
 		stb.append(tableName);
+		stb.append("(Mssv,Hlt,Tn,Ngysinh,Mlp,Tnlp,Tlinlc,Email,QuQun ,Ghich)");
 		stb.append(" VALUES");
 		stb.append("(");
 		for (int k = 0; k < j; k++) {
@@ -83,18 +87,19 @@ public class ExtractData {
 		stb.deleteCharAt(stb.length() - 2);
 		stb.append(")");
 //		String query = "INSERT INTO data VALUES(?, ?, ?, ?, ?,?,?,?)";
-		System.out.println(stb.toString());
+		System.out.println("QUERRY: " + stb.toString());
 		PreparedStatement pre = connect.prepareStatement(stb.toString());
 
 		while ((row = sheet.getRow(i)) != null) {
 			try {
-				j = 0;
+				j = 1;
+//				cell = row.getCell(j);cell.getStringCellValue();
 				while ((cell = row.getCell(j)) != null) {
 					try {
-						pre.setString(j + 1, cell.getStringCellValue());
+						pre.setString(j, cell.getStringCellValue());
 						System.out.println(cell.getStringCellValue());
 					} catch (IllegalStateException e) {
-						pre.setString(j + 1, String.valueOf((int) cell.getNumericCellValue()));
+						pre.setString(j, String.valueOf((int) cell.getNumericCellValue()));
 					}
 					j++;
 				}
@@ -103,6 +108,7 @@ public class ExtractData {
 
 			} catch (Exception e) {
 				// TODO: handle exception
+				e.printStackTrace();
 				System.out.println("SAI CẤU TRÚC");
 			}
 
@@ -151,9 +157,9 @@ public class ExtractData {
 
 			try {
 				String[] data = lineText.split(",");
-				for (int i = 0; i < data.length; i++) {
+				for (int i = 1; i < data.length; i++) {
 					String d = data[i];
-					pre.setString(i + 1, d);
+					pre.setString(i, d);
 				}
 				pre.execute();
 			} catch (Exception e) {
