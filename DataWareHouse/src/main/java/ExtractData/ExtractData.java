@@ -170,47 +170,7 @@ public class ExtractData {
 		lineReader.close();
 	}
 
-//	public void copy(String database1, String nameTableDB1, String database2, String nameTableDB2, String fieldName)
-//			throws ClassNotFoundException, SQLException {
-//
-//		ResultSet rs;
-//		Statement stmt = connectionDB1.createStatement();
-//		String sqlSelectNameColumn = "SELECT * FROM " + nameTableDB1;
-//		System.out.println(sqlSelectNameColumn);
-//		rs = stmt.executeQuery(sqlSelectNameColumn);
-//		ResultSetMetaData md = (ResultSetMetaData) rs.getMetaData();
-//		int counter = md.getColumnCount();
-//		String colName[] = new String[counter];
-//		System.out.println("The column names are as follows:");
-//		for (int loop = 1; loop <= counter; loop++) {
-//			colName[loop - 1] = md.getColumnLabel(loop);
-////			sqlCreateTable += colName[loop - 1] + " CHAR(50),";
-//		}
-//		String sql = "";
-//		String fields[] = fieldName.split(",");
-//		// tạo table với table name được truyền vào
-//		sql = "CREATE table " + nameTableDB2 + " (";
-//		for (int i = 0; i < fields.length - 1; i++) {
-//			sql += fields[0] + " CHAR(50),";
-//		}
-//		sql += fields[0] + " CHAR(50))";
-//		System.out.println(sql);
-//
-//		String sqlCreateTable = "CREATE table " + nameTableDB2 + "(" + colName[0] + " VARCHAR(15)," + colName[1]
-//				+ " CHAR(50)," + colName[2] + " CHAR(50)," + colName[3] + " CHAR(50)," + colName[4] + " CHAR(50))";
-////		sqlCreateTable += ")";
-//
-//		System.out.println(sqlCreateTable);
-//		PreparedStatement p = connectionDB2.prepareStatement(sqlCreateTable);
-//		p.execute();
-//
-////		COPY 
-//		String insert = "INSERT INTO " + database2 + "." + nameTableDB2 + " SELECT * FROM " + database1 + "."
-//				+ nameTableDB1;
-//		System.out.println(insert);
-//		PreparedStatement pc = connectionDB2.prepareStatement(insert);
-//		pc.execute();
-//	}
+
 
 	public ArrayList<ArrayList<String>> config() throws ClassNotFoundException, SQLException {
 //		String s = "";

@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import ExtractData.ExtractDataApp;
+import load_datawarehouse.LoadDataWareHouse;
 import myduyen.Download.DownloadFileServer;
 
 public class App {
@@ -16,6 +17,8 @@ public class App {
 		final DownloadFileServer d = new DownloadFileServer();
 		// load staging
 		final ExtractDataApp ex = new ExtractDataApp();
+		// load data warehouse
+		final LoadDataWareHouse loader = new LoadDataWareHouse();
 		System.out.println("aaaaa");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 		ses.scheduleAtFixedRate(new Runnable() {
@@ -24,6 +27,8 @@ public class App {
 				try {
 					d.run();
 					ex.startExtract();
+					loader.load();
+					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien", "");
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -38,8 +43,7 @@ public class App {
 					e.printStackTrace();
 				}
 			}
-		}, 0, 1, TimeUnit.MINUTES); //1p 1 lần
-
+		}, 0, 1, TimeUnit.MINUTES); // 1p 1 lần
 
 	}
 }
