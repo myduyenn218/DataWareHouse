@@ -23,15 +23,6 @@ import config.DBConnection;
 
 public class ExtractData {
 
-	private Connection connectionDB1;
-	private Connection connectionDB2;
-
-	public ExtractData(Connection connectionDB1, Connection connectionDB2) {
-		super();
-		this.connectionDB1 = connectionDB1;
-		this.connectionDB2 = connectionDB2;
-	}
-
 	public ExtractData() {
 		// TODO Auto-generated constructor stub
 	}
@@ -108,7 +99,7 @@ public class ExtractData {
 
 			} catch (Exception e) {
 				// TODO: handle exception
-				e.printStackTrace();
+//				e.printStackTrace();
 				System.out.println("SAI CẤU TRÚC");
 			}
 
@@ -132,8 +123,8 @@ public class ExtractData {
 //		String sql;
 		// Đọc các field cuả file
 		lineText = lineReader.readLine();
-		// tác các field truyền vàp
-//		String fields[] = fieldName.split(delimited);
+		// các field truyền vàp
+		String fields[] = lineText.split(",");
 		// tạo table với table name được truyền vào
 //		sql = "CREATE table " + tableName + " (";
 //		for (int i = 0; i < fields.length - 1; i++) {
@@ -148,7 +139,7 @@ public class ExtractData {
 
 		// insert dữ liệu vào table vừa tạo
 		String query = "INSERT INTO " + tableName + " VALUES(";
-		for (int i = 0; i < 11 - 1; i++) {
+		for (int i = 0; i < fields.length-1; i++) {
 			query += "?,";
 		}
 		query += "?)";
@@ -157,10 +148,12 @@ public class ExtractData {
 
 			try {
 				String[] data = lineText.split(",");
-				for (int i = 1; i < data.length; i++) {
-					String d = data[i];
+				pre.setString(1, null);
+				for (int i = 2; i < data.length +1 ; i++) {
+					String d = data[i-1];
 					pre.setString(i, d);
 				}
+//				System.out.println(pre.toString());
 				pre.execute();
 			} catch (Exception e) {
 				System.out.println("SAI CẤU TRÚC");
@@ -169,8 +162,6 @@ public class ExtractData {
 		}
 		lineReader.close();
 	}
-
-
 
 	public ArrayList<ArrayList<String>> config() throws ClassNotFoundException, SQLException {
 //		String s = "";

@@ -18,13 +18,5 @@ public class DBConnection {
 		return connection;
 
 	}
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		String jdbcURL = "jdbc:mysql://localhost/dssv?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		String userName ="root";
-		String password = "";
-		Connection connection = DBConnection.getConnection(jdbcURL, userName, password);
-		if(connection != null) {
-			
-		}
-	}
+	
 }

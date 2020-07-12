@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import config.DBConnection;
+import config.OpenControlDB;
 import config.ReadProperties;
 
 /**
@@ -19,13 +20,7 @@ public class DownloadFileServer {
 
 	public void openControlDB() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		if (CONNECTION_CONTROLLDATA == null) {
-			String host = ReadProperties.getProperty("host");
-			String database = ReadProperties.getProperty("database");
-			String jdbcURL_1 = "jdbc:mysql://" + host + "/" + database
-					+ "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-			String userName_1 = ReadProperties.getProperty("username");
-			String password_1 = ReadProperties.getProperty("password");
-			CONNECTION_CONTROLLDATA = DBConnection.getConnection(jdbcURL_1, userName_1, password_1);
+			CONNECTION_CONTROLLDATA = OpenControlDB.openControlDB();
 		}
 	}
 

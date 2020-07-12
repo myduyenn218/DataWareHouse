@@ -37,7 +37,7 @@ public class LoadDataWareHouse {
 		}
 	}
 
-	public void load() throws ClassNotFoundException, NoSuchAlgorithmException, SQLException, IOException {
+	public void connectDB() throws ClassNotFoundException, NoSuchAlgorithmException, SQLException, IOException {
 		openControlDB();
 		String sql = "Select url_db_staging,table_name_staging,url_db_warehouse, table_name_warehouse,username_db , password_db FROM myconfig";
 		PreparedStatement p = CONNECTION_CONTROLLDATA.prepareStatement(sql);
@@ -86,7 +86,7 @@ public class LoadDataWareHouse {
 			throws ClassNotFoundException, SQLException {
 
 		if (!isTableExist("sinhvien")) {
-			System.out.println("aaaa");
+//			System.out.println("aaaa");
 			final String sql = "CREATE TABLE `warehousedata`.`sinhvien`  (\n"
 					+ "  `STT` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,\n" + "  `MSSV` varchar(10) NOT NULL,\n"
 					+ "  `ho` varchar(50) NOT NULL,\n" + "  `ten` varchar(10) NOT NULL,\n"
@@ -166,7 +166,7 @@ public class LoadDataWareHouse {
 	public static void main(String[] args) {
 		LoadDataWareHouse loader = new LoadDataWareHouse();
 		try {
-			loader.load();
+			loader.connectDB();
 			loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien", "");
 		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException | IOException e) {
 			// TODO Auto-generated catch block
