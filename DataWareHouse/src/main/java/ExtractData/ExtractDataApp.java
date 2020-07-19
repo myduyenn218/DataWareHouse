@@ -37,10 +37,10 @@ public class ExtractDataApp {
 
 	public void startExtract() throws ClassNotFoundException, SQLException, IOException, NoSuchAlgorithmException {
 		openControlDB();
-		String sql = "Select url_db_staging,table_name_staging, path_file_local,username_db , password_db FROM myconfig";
+		String sql = "Select url_db_staging,table_name_staging, path_file_local,username_db , password_db, fields FROM myconfig";
 		PreparedStatement p = CONNECTION_CONTROLLDATA.prepareStatement(sql);
 		ResultSet resultSet = p.executeQuery();
-		String url, tableName, password, username, location;
+		String url, tableName, password, username, location, fields;
 		resultSet.next(); // đọc dòng đầu tiên
 
 		url = resultSet.getString("url_db_staging"); // http://drive.ecepvn.org:5000/webapi
@@ -48,6 +48,7 @@ public class ExtractDataApp {
 		username = resultSet.getString("username_db"); // admin
 		password = resultSet.getString("password_db"); // admin
 		location = resultSet.getString("path_file_local"); // folder local
+		fields = resultSet.getString("fields"); 
 		p.close();
 		System.out.println(url);
 		System.out.println(username);
@@ -76,7 +77,7 @@ public class ExtractDataApp {
 						} else if (typeFile.equals("csv")) {
 							try {
 								System.out.println();
-								ex.loadCSV(connect, location + f.getName(), tableName);
+								ex.loadCSV(connect, location + f.getName(), tableName, fields);
 								updatedLog(connect, "ReadyTransform", f.getName());
 							} catch (Exception e) {
 								// TODO: handle exception

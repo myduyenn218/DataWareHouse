@@ -1,5 +1,6 @@
 package load_datawarehouse;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -11,13 +12,22 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
+import org.ecepvn.date_dim.Date_Dim;
+
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
+
+import ExtractData.ExtractData;
 import config.DBConnection;
+import config.OpenControlDB;
 import config.ReadProperties;
 
 public class LoadDataWareHouse {
 	Connection CONNECTION_CONTROLLDATA;
 	Connection connectDBStaging;
 	Connection connectDBWH;
+	public static final String OUT_FILE = "date_dim_without_quarter.csv";
+	public static final String DATA_MONHOC_FILE_2013 = "data_monhoc_2013.csv";
+	public static final String DATA_MONHOC_FILE_2014 = "data_monhoc_2014.csv";
 
 	public void openControlDB() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		if (CONNECTION_CONTROLLDATA == null) {
@@ -61,7 +71,8 @@ public class LoadDataWareHouse {
 		System.out.println(dateStr);
 		if (dateStr.contains("/")) {
 			String temp[] = dateStr.split("\\/");
-			return new Date(Date.UTC(Integer.parseInt(temp[2]) - 1900, Integer.parseInt(temp[1]), Integer.parseInt(temp[0]), 0, 0, 0));
+			return new Date(Date.UTC(Integer.parseInt(temp[2]) - 1900, Integer.parseInt(temp[1]),
+					Integer.parseInt(temp[0]), 0, 0, 0));
 		}
 		return new Date(0);
 	}
@@ -70,19 +81,20 @@ public class LoadDataWareHouse {
 		try {
 			DatabaseMetaData dbm = connectDBWH.getMetaData();
 			ResultSet tables = dbm.getTables(null, null, tableName, null);
-			System.out.println(tables.next());
-			System.out.println(tables.getRow());
-			return tables.next();
+//			System.out.println(tableName + ": " + tables.next());
+			boolean result = tables.next();
+//			System.out.println(tables.getRow());
+			return result;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 
 		return false;
 	}
 
-	public void copy(String database1, String nameTableDB1, String database2, String nameTableDB2, String fieldName)
+	public void copy(String database1, String nameTableDB1, String database2, String nameTableDB2)
 			throws ClassNotFoundException, SQLException {
 
 		if (!isTableExist("sinhvien")) {
@@ -96,7 +108,7 @@ public class LoadDataWareHouse {
 					+ "  `ghichu` varchar(255) NOT NULL,\n" + "  PRIMARY KEY (`STT`)\n" + ");";
 			connectDBWH.prepareStatement(sql).execute();
 		}
-		
+
 		ResultSet rs;
 		Statement stmt = connectDBStaging.createStatement();
 		String sqlSelectNameColumn = "SELECT * FROM " + nameTableDB1;
@@ -115,7 +127,7 @@ public class LoadDataWareHouse {
 			String email = rs.getString("Email");
 			String address = rs.getString("QuQun");
 			String note = rs.getString("Ghich");
-			
+
 			final PreparedStatement p = connectDBWH.prepareStatement(insertSQl);
 			p.setString(1, mssv);
 			p.setString(2, lastname);
@@ -130,44 +142,61 @@ public class LoadDataWareHouse {
 			p.execute();
 		}
 
-//		
-//		
-//		
-//		for (int loop = 1; loop <= counter; loop++) {
-//			colName[loop - 1] = md.getColumnLabel(loop);
-////	sqlCreateTable += colName[loop - 1] + " CHAR(50),";
-//		}
-//		String sql = "";
-//		String fields[] = fieldName.split(",");
-//// tạo table với table name được truyền vào
-//		sql = "CREATE table " + nameTableDB2 + " (";
-//		for (int i = 0; i < fields.length - 1; i++) {
-//			sql += fields[0] + " CHAR(50),";
-//		}
-//		sql += fields[0] + " CHAR(50))";
-//		System.out.println(sql);
-//
-//		String sqlCreateTable = "CREATE table " + nameTableDB2 + "(" + colName[0] + " VARCHAR(15)," + colName[1]
-//				+ " CHAR(50)," + colName[2] + " CHAR(50)," + colName[3] + " CHAR(50)," + colName[4] + " CHAR(50))";
-////sqlCreateTable += ")";
-//
-//		System.out.println(sqlCreateTable);
-//		PreparedStatement p = connectionDB2.prepareStatement(sqlCreateTable);
-//		p.execute();
-//
-////COPY 
-//		String insert = "INSERT INTO " + database2 + "." + nameTableDB2 + " SELECT * FROM " + database1 + "."
-//				+ nameTableDB1;
-//		System.out.println(insert);
-//		PreparedStatement pc = connectionDB2.prepareStatement(insert);
-//		pc.execute();
 	}
-	
+
+	public void loadDateDim() {
+		File file = new File(OUT_FILE);
+		if (!file.exists()) {
+			new Date_Dim().date();
+		}
+		try {
+			if (!isTableExist("date_dim")) {
+				final String sqlCreateTable = "create table date_dim(Date_SK BIGINT PRIMARY KEY AUTO_INCREMENT ,\n"
+						+ " Full_date date null,\n" + "  DAY_SINCE_2005 int null, \n"
+						+ "  Month_since_2005 int null, \n" + "  Day_Of_Week text null,\n"
+						+ "  CALENDAR_MONTH text null,\n" + "  CALENDAR_YEAR int null,\n"
+						+ "  Calendar_Year_Month text null,\n" + "  Day_OF_Month int null,\n"
+						+ "  Day_of_year int null,\n" + "  week_of_year_sunday int null,\n"
+						+ "  year_week_sunday text null,\n" + "  WEEK_SUNDAY_START text null,\n"
+						+ "  WEEK_OF_YEAR_MONDAY text null,\n" + "  YEAR_WEEK_MONDAY text null,\n"
+						+ "  WEEK_MONDAY_START text null,\n" + "  HOLIDAY text null,\n" + "  DAY_TYPE text null,\n"
+						+ "  QUARTER_OF_YEAR text null, \n" + "  QUARTER_SINCE_2005 text null\n" + "  );";
+				connectDBWH.prepareStatement(sqlCreateTable).execute();
+			}
+			new ExtractData().loadCSV(connectDBWH, OUT_FILE, "date_dim", "" );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void loadMonHoc(Connection connect, String pathFile, String tableName, String fields) {
+		File file = new File(DATA_MONHOC_FILE_2013);
+		if (!file.exists()) {
+			System.out.println("File khoong tofn tai");
+			return;
+		}
+		try {
+			System.out.println(isTableExist("mon_hoc"));
+			if (!isTableExist("mon_hoc")) {
+				final String sqlCreateTable = "create table mon_hoc(ID BIGINT PRIMARY KEY AUTO_INCREMENT, STT int null, Ma_MH int null, Ten_MH text null, TC int null, Khoa_BoMon_QuanLy text null, Khoa_BoMon_DangSuDung text null,Note text null, dt_expire date DEFAULT '9999-12-31');";
+				connectDBWH.prepareStatement(sqlCreateTable).execute();
+			}
+			System.out.println("loading..");
+			// test truyền vào danh sách các field muốn insert
+			new ExtractData().loadCSV(connect, pathFile, tableName, fields);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
 		LoadDataWareHouse loader = new LoadDataWareHouse();
 		try {
 			loader.connectDB();
-			loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien", "");
+//			loader.loadDateDim();
+//			loader.loadMonHoc();
+//			loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien", "");
 		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -107,7 +107,7 @@ public class ExtractData {
 		excel.close();
 	}
 
-	public void loadCSV(Connection connect, String csvFile, String tableName)
+	public void loadCSV(Connection connect, String csvFile, String tableName, String fieldsTable)
 			throws ClassNotFoundException, SQLException, IOException {
 
 		System.out.println("Connect DB Successfully :)");
@@ -138,61 +138,38 @@ public class ExtractData {
 //		System.out.println("Create table Successfully :)");
 
 		// insert dữ liệu vào table vừa tạo
-		String query = "INSERT INTO " + tableName + " VALUES(";
-		for (int i = 0; i < fields.length-1; i++) {
+		String query = "INSERT INTO " + tableName + " (" + fieldsTable + ") " + " VALUES(";
+		int countField = fieldsTable.split(",").length;
+		for (int i = 0; i < countField - 1; i++) {
 			query += "?,";
 		}
 		query += "?)";
 		PreparedStatement pre = connect.prepareStatement(query);
-		while ((lineText = lineReader.readLine()) != null) {
 
+		while ((lineText = lineReader.readLine()) != null) {
+			String stt = null ;
 			try {
 				String[] data = lineText.split(",");
-				pre.setString(1, null);
-				for (int i = 2; i < data.length +1 ; i++) {
-					String d = data[i-1];
+				int c = data.length;
+//				pre.setString(1, null);
+				stt = data[0];
+
+				for (int i = 1; i < c + 1; i++) {
+					String d = data[i - 1];
 					pre.setString(i, d);
+				}
+				for (; c+1 < countField+1; c++) {
+//					String d = data[c - 1];
+					pre.setString(c+1, null);
 				}
 //				System.out.println(pre.toString());
 				pre.execute();
 			} catch (Exception e) {
-				System.out.println("SAI CẤU TRÚC");
+				System.out.println("SAI CẤU TRÚC: " + stt );
 			}
 
 		}
 		lineReader.close();
-	}
-
-	public ArrayList<ArrayList<String>> config() throws ClassNotFoundException, SQLException {
-//		String s = "";
-		String jdbcURL_1 = "jdbc:mysql://localhost/controldata?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-		String userName_1 = "root";
-		String password_1 = "";
-		Connection connectionDB1 = DBConnection.getConnection(jdbcURL_1, userName_1, password_1);
-
-		String sql = "Select * FROM myconfig";
-
-		PreparedStatement p = connectionDB1.prepareStatement(sql);
-		ResultSet resultSet = p.executeQuery(sql);
-		ResultSetMetaData rsmd = resultSet.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();
-
-		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-
-		while (resultSet.next()) {
-			ArrayList<String> field = new ArrayList<String>();
-			for (int i = 1; i <= columnsNumber; i++) {
-//				if (i > 1)
-//					System.out.print(",  ");
-				String columnValue = resultSet.getString(i);
-				field.add(columnValue);
-//				System.out.print(rsmd.getColumnName(i) + ": " + columnValue);
-			}
-			data.add(field);
-//			System.out.println("");
-		}
-
-		return data;
 	}
 
 }

@@ -1,0 +1,180 @@
+STT,Mã MH,Tên môn học tương đương,TC,Khoa/BM quản lý,
+1,202201,Vật lý 1,2,KHOA HỌC,
+2,202202,Thí nghiệm vật lý 1,1,KHOA HỌC,
+3,202304,Thí nghiệm Hóa ĐC,1,KHOA HỌC,
+4,202402,Thực hành Sinh học đại cương,1,KHOA HỌC,
+5,202401,Sinh học đại cương,2,KHOA HỌC,
+6,202620,Kỹ năng giao tiếp,2,KHOA HỌC,
+7,214201,Nhập môn tin học,3,CNTT,Chỉ áp dụng cho SV chuyên ngành CNTT khóa 2013 trở về trước
+8,214103,Tin học đại cương,3,CNTT,
+9,214477,Data Warehouse,4,CNTT,
+10,206523,KT lanh & LO lenh trang CNTP,2,THỦY SẢN,Chỉ áp dụng cho SV khoa Thủy sản
+11,200524,Quản lý chất lượng trong CBTS,2,THỦY SẢN,
+12,205525,Xử lý nước & chất thải trong CBTS,2,THỦY SẢN,
+13,206525,Xử lý nước & chất thải trong CBTS,2,THỦY SẢN,
+14,208522,Nhiệt kỹ thuật CB thủy sản,2,THỦY SẢN,Chỉ áp dụng cho SV khoa Thủy sản
+15,206316,Sinh hóa chuyên ngành thủy sản,2,THỦY SẢN,Chỉ áp dụng cho SV khoa Thủy sản
+16,202406,Khoa học môi trường đại cương,2,THỦY SẢN,Chỉ áp dụng cho SV khoa Thủy sản
+17,205214,Anh văn chuyên ngành NTTS,2,THỦY SẢN,
+18,206421,Quản trị sản xuất thủy sản,2,THỦY SẢN,
+19,203111,Dược lý làm sảng,4,CN THÚ Y,
+20,203107,Công nghệ SH ứng dụng trong CN,2,CN THÚ Y,
+21,203109,Công nghệ SH ứng dụng trong TY,2,CN THÚ Y,
+22,203157,Thực tập xí nghiệp dược,2,CN THÚ Y,
+23,203158,Kỹ năng báo cáo chuyên đề,2,CN THÚ Y,
+24,203211,Cơ thể 1,3,CN THÚ Y,
+25,203212,Cơ thể 2,2,CN THÚ Y,
+26,203313,Môi trường & SK vật nuôi,2,CN THÚ Y,
+27,203314,Kinh nghiệm thú sản,4,CN THÚ Y,
+28,203363,Bệnh truyền nhiễm gia cầm,2,CN THÚ Y,
+29,203462,Thực tế chăn nuôi,2,CN THÚ Y,
+30,203517,Phương pháp bố trí thí nghiệm,3,CN THÚ Y,
+31,203527,Duy chuyền chuyên ngành,2,CN THÚ Y,
+32,203516,Thú hoang dã,2,CN THÚ Y,
+33,203615,Thực tập trang trại CN.,2,CN THÚ Y,
+34,203159,Cơ thể học Sinh lý HVĐ & Da,3,CN THÚ Y,Áp dụng cho SV CNTY Chương trình tiên tiến
+35,203561,Nguyên lý bệnh I,4,CN THÚ Y,Áp dụng cho SV CNTY Chương trình tiên tiến
+36,203912,Anh văn chuyên ngành,3,CN THÚ Y,Áp dụng cho SV CNTY từ CT tiên tiến chuyển sang Tiếng Việt
+37,203912,Anh văn chuyên ngành,3,CN THÚ Y,Áp dụng cho SV CNTY từ CT tiên tiến chuyển sang Tiếng Việt
+38,217111,Hóa lý 1,2,CN HÓA HỌC,
+39,217109,Hóa lý 2,3,CN HÓA HỌC,
+40,217708,Các pp phân lập & tinh chế,2,CN HÓA HỌC,
+41,217707,Các PP phổ PT cấu trúc phân tử,2,CN HÓA HỌC,
+42,217110,Tinh chất vật liệu,2,CN HÓA HỌC,
+43,217225,Công nghệ màng lọc ứng dụng,2,CN HÓA HỌC,
+44,217415,CNSX phân vi sinh,2,CN HÓA HỌC,
+45,217514,Thực phẩm chứ năng dược,2,CN HÓA HỌC,
+46,217417,Công nghệ chế biến cao su,3,CN HÓA HỌC,
+47,217610,Kỹ thuật nhiên liệu sinh học,3,CN HÓA HỌC,
+48,211301,Công nghệ SH đại cương,2,CN HÓA HỌC,Chỉ áp dụng cho SV Bộ môn CNSH
+49,211134,Đa dạng & Bảo tồn nguồn gen,2,CN SINH HOC,Chỉ áp dụng cho chương trình liên thông ngành CNSH
+50,211215,Di truyền phân tử,3,CN SINH HOC,Chỉ áp dụng cho SV Bộ môn CNSH (khóa 2013 trở về trước)
+51,211214,Sinh hóa học,3,CN SINH HOC,Chỉ áp dụng cho SV Bộ môn CNSH (khóa 2013 trở về trước)
+52,212104,Sinh thái học môi trường,2,CN SINH HOC,Chỉ áp dụng cho SV Chuyên ngành CNSH (khóa 2013 trở về trước)
+53,211319,Đánh giá ô nhiễm môi trường,2,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+54,211322,Thực hành đánh giá ô nhiễm MT,1,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+55,211518,Kiểm nghiệm vi sinh,2,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+56,211218,Miễn địch học đại cương,3,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+57,211324,Quản lý tài nguyên môi trường,2,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+58,211308,Hóa và độc hại môi trường,3,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+59,211323,Thực hành hóa & độc hại MT,1,CN SINH HOC,Chỉ áp dụng cho SV BM CNSH (khóa 2013 trở về trước)
+60,205542,Công nghệ bảo quản gỗ,2,LÂM NGHIỆP,
+61,205824,Dự toán công trình nội thất,2,LÂM NGHIỆP,
+62,216108,Chọn, tạo giống cây hoa cảnh,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+63,216109,Đa dạng sinh học và bảo tồn CQ,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+64,216107,Cơ sở sinh thái học,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+65,216308,Quản lý dự án cảnh quan,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+66,216202,Khí tượng học,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+67,204303,Khoa học đất cơ bản,3,NÔNG HỌC,Chỉ áp dụng cho SV khoa MTTN
+68,204301,Độ phì và phân bón,3,NÔNG HỌC,Chỉ áp dụng cho SV khoa MTTN
+69,204707,Côn trùng cơ bản,2,NÔNG HỌC,Chỉ áp dụng cho SV khoa MTTN
+70,216110,Quản lý sâu bệnh cây trồng,3,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+71,216320,Phong thủy sân vườn,2,MÔI TRƯỜNG VÀ TN,Chỉ áp dụng cho SV khoa MTTN
+72,208133,Luật tài chính kế toán,2,KINH TẾ,Chỉ áp dụng cho SV ngành Quản trị tài chính
+73,208499,Khóa luận TN ngành QT,10,KINH TẾ,
+74,206153,Kiến tập chuyên ngành KT & KDMN,2,KINH TẾ,Chỉ áp dụng cho SV ngành kinh doanh NN và chuyên ngành Kinh tế Nông lâm
+75,208197,Khóa luận TN ngành KT & KDNN,10,KINH TẾ,
+76,208445,Marketing nông nghiệp,2,KINH TẾ,
+77,208152,Tiếng Anh chuyên ngành kinh tế,3,KINH TẾ,
+78,208699,Khoá luận TN ngành KTTNMT,10,KINH TẾ,
+79,208399,Khoá luận TN ngành Kế tóan,10,KINH TẾ,
+80,208151,PP nghiên cứu KH kinh tế,2,KINH TẾ,Chỉ áp dụng cho SV ngành Kinh tế nông lâm. Phát triển nông thôn
+81,208151,PP nghiên cứu KH kinh tế,2,KINH TẾ,Chỉ áp dụng cho SV ngành Kinh tế tài nguyên môi trường
+82,208403,Phương pháp NCKH Quản trị,2,KINH TẾ,Chỉ áp dụng cho SV ngành kế toán 
+83,208627,Kinh tế tài nguyên MT căn bản,3,KINH TẾ,Chỉ áp dụng cho SV chuyên ngành Kinh tế tài nguyên môi trường
+84,208475,Tiếng Anh CN quản trị,3,KINH TẾ,
+85,208208,Phong thủy ứng dụng,3,KINH TẾ,
+86,208226,Kinh tế lượng ứng dụng,2,KINH TẾ,
+87,208530,ƯP hệ thống thông tin địa lý,3,KINH TẾ,
+88,208421,Dự án đầu tư,3,KINH TẾ,
+89,208438,Quản trị dự án,2,KINH TẾ,Chỉ áp dụng cho SV chuyên ngành PT Nông thôn
+90,208599,Khóa luận tốt nghiệp TN ngành PTNT,10,KINH TẾ,
+91,208348,Kế toán tài chánh 2,3,KINH TẾ,Chỉ áp dụng cho SV liên thông lên đại học ngành Kế toán
+92,208300,Kế toán tài chánh 3,3,KINH TẾ,Chỉ áp dụng cho SV liên thông lên đại học ngành Kế toán
+93,213120,Theosy of Tranggiion,3,NGOẠI NGỮ SƯ PHẠM,
+94,213411,Tiếng việt thực hành,2,NGOẠI NGỮ SƯ PHẠM,
+95,213408,Introduction so Lierstue,2,NGOẠI NGỮ SƯ PHẠM,
+96,213409,Birtish Studes,2,NGOẠI NGỮ SƯ PHẠM,
+97,213410,American students,2,NGOẠI NGỮ SƯ PHẠM,
+98,213415,Birtish Lierstue,3,NGOẠI NGỮ SƯ PHẠM,
+99,213412,American Lierstue,3,NGOẠI NGỮ SƯ PHẠM,
+100,213413,Lịch sử văn minh Phương Tây,2,NGOẠI NGỮ SƯ PHẠM,
+101,213414,Lịch sử văn minh Phương Đông ,2,NGOẠI NGỮ SƯ PHẠM,
+102,213135,Phương pháp NC Khoa học,2,NGOẠI NGỮ SƯ PHẠM,
+103,213125,Educational Paychology,3,NGOẠI NGỮ SƯ PHẠM,
+104,213126,TESOL Methodology 1,3,NGOẠI NGỮ SƯ PHẠM,
+105,213127,TESOL methodology 2,3,NGOẠI NGỮ SƯ PHẠM,
+106,213132,Classroom Obvervation,3,NGOẠI NGỮ SƯ PHẠM,
+107,213133,Teaching practice 1,3,NGOẠI NGỮ SƯ PHẠM,
+108,213903,Tổng hợp năng lực Tiếng Anh 3,3,NGOẠI NGỮ SƯ PHẠM,
+109,209132,PT thiết kế HTTT đất đai,3,QUẢN LÝ ĐO & BĐS,
+110,209129,Đo đạt địa chính,3,QUẢN LÝ ĐO & BĐS,
+111,209140,Trắc lượng ảnh,3,QUẢN LÝ ĐO & BĐS,
+112,209141,Viễn thám,3,QUẢN LÝ ĐO & BĐS,
+113,209138,Tích hợp viễn thảm & GiS,2,QUẢN LÝ ĐO & BĐS,
+114,209145,Bản đồ địa hình,2,QUẢN LÝ ĐO & BĐS,
+115,209144,Kỹ thuật bản đồ số,2,QUẢN LÝ ĐO & BĐS,Chỉ áp dụng cho SV ngành Công nghệ địa chính
+116,209133,Lưu trữ hồ sơ địa chính,2,QUẢN LÝ ĐO & BĐS,
+117,209422,Kinh tế đất,2,QUẢN LÝ ĐO & BĐS,
+118,209421,Chiến lược kinh doanh ĐĐS,2,QUẢN LÝ ĐO & BĐS,
+119,209218,Tài chính đất đai,2,QUẢN LÝ ĐO & BĐS,
+120,209226,Luật đầu tư,2,QUẢN LÝ ĐO & BĐS,
+121,209228,Luật xây dựng,2,QUẢN LÝ ĐO & BĐS,
+122,209227,Luật nhà ở,2,QUẢN LÝ ĐO & BĐS,
+123,209224,Đăng ký đất đai & BĐS,2,QUẢN LÝ ĐO & BĐS,
+124,209230,Thống kê, kiểm kê đất đai,2,QUẢN LÝ ĐO & BĐS,
+125,209225,Bồi thường đất đai & BĐS,2,QUẢN LÝ ĐO & BĐS,
+126,209338,Tài nguyên đất,3,QUẢN LÝ ĐO & BĐS,
+127,209339,Quy hoạch tổng thể KT-XH ,2,QUẢN LÝ ĐO & BĐS,
+128,209340,Quy hoạch đồ thị,3,QUẢN LÝ ĐO & BĐS,Chỉ áp dụng cho SV khoa QLĐĐ&BĐS
+129,209341,Quy hoạch PT nông thôn,2,QUẢN LÝ ĐO & BĐS,
+130,204534,Nông học đại cương,2,NÔNG HỌC,
+131,204534,Nông học đại cương,2,NÔNG HỌC,
+132,204618,Phương pháp tiếp cận khoa học,1,NÔNG HỌC,
+133,204615,Khí tượng nông nghiệp,2,NÔNG HỌC,Chỉ áp dụng cho SV khoa Nông học
+134,204423,Khuyết nông,2,NÔNG HỌC,
+135,204535,Rèn nghề 1,1,NÔNG HỌC,
+136,204739,Rèn nghề BVTV 1,1,NÔNG HỌC,
+137,204616,Phương pháp thí nghiệm ,3,NÔNG HỌC,
+138,204735,Côn trùng,3,NÔNG HỌC,
+139,204737,Côn trùng và động vật hại NN,3,NÔNG HỌC,
+140,204736,Bệnh cây nâng cao,3,NÔNG HỌC,
+141,204731,Dịch hại trong kho,2,NÔNG HỌC,
+142,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,
+143,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,
+144,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,Chỉ áp dụng cho SV khoa Nông học
+145,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,Chỉ áp dụng cho SV khoa Nông học
+146,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,
+147,204533,Cây công nghiệp ngắn ngày,2,NÔNG HỌC,
+148,204617,Thủy nông,2,NÔNG HỌC,
+149,204738,Bảo vệ môi trường nông nghiệp,2,NÔNG HỌC,
+150,210332,CNCB dầu và chất béo TP,2,CN THỰC PHẨM,
+151,210416,Nước trong CNTP,2,CN THỰC PHẨM,Chỉ áp dụng cho SV khoa CNTP
+152,213650,Anh văn 1,3,CN THỰC PHẨM,Áp dụng cho SV CNTP CT tiên tiến
+153,213651,Anh văn 2,3,CN THỰC PHẨM,Áp dụng cho SV CNTP CT tiên tiến
+154,210204,Hóa sinh đại cương,3,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+155,210502,Dinh dưỡng đại cương,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+156,210362,Thuộc tính thực phẩm,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+157,210903,Rèn nghề 1,1,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+158,210318,Nhiệt kỹ thuật thực phẩm,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+159,210316,KT lạnh & UD lạnh trong CNTP,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+160,210110,Khoa học cảm quan và PTCQTP,3,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+161,210301,Bao bì thực phẩm,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+162,210506,An toàn vệ sinh thực phẩm,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+163,210512,Quản lý chất lượng trong CBTP,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+164,210513,PP Phân tích TP hóa-lý TPhẩm,3,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+165,210202,Công nghệ SX thức uống lên men,3,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+166,210232,CN dầu và chất béo TP,2,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+167,210309,CN chế biến trà, cà phê, ca ca,3,CN THỰC PHẨM,Áp dụng cho SV CNTP từ CT tiên tiến chuyển sang CT Tiếng Việt
+168,207233,Cơ sở kỹ thuật thực phẩm,3,CƠ KHÍ,
+169,207230,Máy chế biến ,3,CƠ KHÍ,
+170,207126,Thực tập gia công cắt - gọt,2,CƠ KHÍ,
+171,207127,Thực tập gia công hàn - nguội,2,CƠ KHÍ,
+172,207117,AutoCAD,2,CƠ KHÍ,
+173,207629,Động lực học - điều khiển robot,3,CƠ KHÍ,
+174,207324,Cấu tạo động cơ đốt trong,3,CƠ KHÍ,
+175,207426,Cơ sở kỹ thuật lạnh,3,CƠ KHÍ,
+176,207430,Nẵng lượng tái tạo,3,CƠ KHÍ,
+177,207427,Thiết bị sấy! Thiết bị lạnh ,3,CƠ KHÍ,
+178,207736,Cấu tạo động cơ otô,3,CƠ KHÍ,
+179,207737,Nhiệt liệu dầu mờ,2,CƠ KHÍ,

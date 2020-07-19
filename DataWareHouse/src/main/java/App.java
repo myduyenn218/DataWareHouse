@@ -20,6 +20,7 @@ public class App {
 
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
+		
 		// download file data
 		final DownloadFileServer d = new DownloadFileServer();
 		// load staging
@@ -33,9 +34,9 @@ public class App {
 			public void run() {
 				try {
 					d.run();
-					ex.startExtract();
-					loader.connectDB();
-					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien", "");
+//					ex.startExtract();
+//					loader.connectDB();
+//					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien");
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
