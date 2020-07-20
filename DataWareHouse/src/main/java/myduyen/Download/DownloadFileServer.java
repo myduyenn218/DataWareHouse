@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import config.DBConnection;
-import config.OpenControlDB;
+import config.OpenConnection;
 import config.ReadProperties;
 
 /**
@@ -20,7 +20,7 @@ public class DownloadFileServer {
 
 	public void openControlDB() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		if (CONNECTION_CONTROLLDATA == null) {
-			CONNECTION_CONTROLLDATA = OpenControlDB.openControlDB();
+			CONNECTION_CONTROLLDATA = OpenConnection.openConnectWithDBName("controldata");
 		}
 	}
 

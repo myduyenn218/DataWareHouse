@@ -18,7 +18,7 @@ import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
 import ExtractData.ExtractData;
 import config.DBConnection;
-import config.OpenControlDB;
+import config.OpenConnection;
 import config.ReadProperties;
 
 public class LoadDataWareHouse {

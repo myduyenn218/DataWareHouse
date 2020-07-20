@@ -12,7 +12,7 @@ import org.ecepvn.date_dim.Date_Dim;
 import ExtractData.ExtractData;
 import ExtractData.ExtractDataApp;
 import config.DBConnection;
-import config.OpenControlDB;
+import config.OpenConnection;
 import load_datawarehouse.LoadDataWareHouse;
 import myduyen.Download.DownloadFileServer;
 
