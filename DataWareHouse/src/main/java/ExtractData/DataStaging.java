@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import org.apache.commons.compress.archivers.dump.InvalidFormatException;
@@ -25,27 +26,27 @@ import dao.Config;
 import dao.ControlDB;
 import dao.Log;
 
-//import control.Config;
-//import dao.ControlDB;
-//import log.Log;
+
 
 public class DataStaging {
 	static final String EXT_TEXT = ".txt";
 	static final String EXT_CSV = ".csv";
 	static final String EXT_EXCEL = ".xlsx";
-	private String config_name;
+	private int config_id;
 	private String state;
 
-	public String getConfig_name() {
-		return config_name;
-	}
-
-	public void setConfig_name(String config_name) {
-		this.config_name = config_name;
-	}
+	
 
 	public String getState() {
 		return state;
+	}
+
+	public int getConfig_id() {
+		return config_id;
+	}
+
+	public void setConfig_id(int config_id) {
+		this.config_id = config_id;
 	}
 
 	public void setState(String state) {
@@ -54,7 +55,10 @@ public class DataStaging {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		DataStaging dw = new DataStaging();
-		dw.setConfig_name("f_sinhvien");
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Nhập id config cần download: ");
+		int id = sc.nextInt();
+		dw.setConfig_id(id);
 		dw.setState("OK");
 		DataProcess dp = new DataProcess();
 		ControlDB cdb = new ControlDB();
@@ -66,7 +70,8 @@ public class DataStaging {
 	}
 
 	public void ExtractToDB(DataProcess dp) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_name);
+		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
+		// Lấy các trường trong config
 		for (Config configuration : lstConf) {
 			String extention = "";
 			String target_table = configuration.getTable_name_staging();
@@ -75,35 +80,43 @@ public class DataStaging {
 			String column_list = configuration.getFields();	
 //			String variabless = configuration.getVariabless();
 			System.out.println(target_table);
-//			System.out.println(import_dir);/
-			Log log = dp.getCdb().getLogsWithStatus(this.state);
+			// Lấy các trường có trong dòng log đầu tiên có status = OK;
+			Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
+			
+			// Lấy config_name từ trong config ra
 			String file_name = log.getIdLog();
+			// Đường dẫn dẫn tới file cần load
 			String sourceFile = import_dir + file_name;
+			// Đếm số trường trong fields trong bảng config
 			StringTokenizer str = new StringTokenizer(column_list, delim);
 			System.out.println(sourceFile);
 			File file = new File(sourceFile);
-			System.out.println(file.exists());
+			//System.out.println(file.exists());
+			//Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
 			extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
 					: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
 			if (file.exists()) {
 				if (log.getStatus().equals("OK")) {
 					String values = "";
+					// Nếu file là .txt thì đọc file .txt
 					if (extention.equals(".txt")) {
 						values = dp.readValuesTXT(file, str.countTokens());
 						extention = ".txt";
+					// Nếu file là .xlsx thì đọc file .xlsx
 					 } else if (extention.equals(".xlsx")) {
 					 values = dp.readValuesXLSX(file,str.countTokens());
 					 extention = ".xlsx";
 					 }
 					System.out.println(values);
+					// Nếu mà đọc đc dữ liệu rồi
 					if (values != null) {
 						String table = "logs";
 						String transform;
 						String status;
 						int config_id = configuration.getIdConf();
-						// time
+						//set thời gian
 						String timestamp = getCurrentTime();
-						// count line
+						// đếm số dòng
 						String stagin_load_count = "";
 						try {
 							stagin_load_count = countLines(file, extention) + "";
@@ -113,18 +126,22 @@ public class DataStaging {
 						}
 						//
 						String target_dir;
+						// rồi ghi dữ liệu vô bảng
+						// nếu ghi được rồi
 
 						if (dp.writeDataToBD(column_list, target_table, values)) {
-							transform = "TR";
-							status = "OK";
-							dp.getCdb().updateLogAfterLoadToStaging(transform, status, timestamp, file_name);
+						// thì updateLog transform = NotReadyTransfrom thành OK, status = OK thành TR
+							status = "TR";
+							transform = "OK";
+							dp.getCdb().updateLogAfterLoadToStaging( status,transform, timestamp, file_name);
 //							target_dir = configuration.getSuccessDir();
 //							 if (moveFile(target_dir, file));
-
+						// Nếu không ghi được 
 						} else {
-							transform = "Not TR";
-							status = "FAIL";
-							dp.getCdb().updateLogAfterLoadToStaging(transform, status, timestamp, file_name);
+						// thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK thành Not TR
+							status = "Not TR";
+							transform = "FAIL";
+							dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
 //							target_dir = configuration.getErrorDir();
 //							if (moveFile(target_dir, file));
 						}
@@ -132,6 +149,7 @@ public class DataStaging {
 				}
 
 			} else {
+				// Không còn file hoặc k tìm được file sẽ sysout
 				System.out.println("Path not exists!!!");
 				return;
 			}
@@ -140,7 +158,7 @@ public class DataStaging {
 
 	}
 
-	// Lay thoi gian hien tai:
+	// Phương thức lấy ra thời gian hiện tạo để ghi vào log đeer:
 	public String getCurrentTime() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
@@ -148,28 +166,29 @@ public class DataStaging {
 	}
 
 	// Chuyen file da load thanh cong vao thu muc success:
-	private boolean moveFile(String target_dir, File file) {
-		try {
-			BufferedInputStream bReader = new BufferedInputStream(new FileInputStream(file));
-			BufferedOutputStream bWriter = new BufferedOutputStream(
-					new FileOutputStream(target_dir + File.separator + file.getName()));
-			byte[] buff = new byte[1024 * 10];
-			int data = 0;
-			while ((data = bReader.read(buff)) != -1) {
-				bWriter.write(buff, 0, data);
-			}
-			bReader.close();
-			bWriter.close();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			file.delete();
-		}
-	}
+//	private boolean moveFile(String target_dir, File file) {
+//		try {
+//			BufferedInputStream bReader = new BufferedInputStream(new FileInputStream(file));
+//			BufferedOutputStream bWriter = new BufferedOutputStream(
+//					new FileOutputStream(target_dir + File.separator + file.getName()));
+//			byte[] buff = new byte[1024 * 10];
+//			int data = 0;
+//			while ((data = bReader.read(buff)) != -1) {
+//				bWriter.write(buff, 0, data);
+//			}
+//			bReader.close();
+//			bWriter.close();
+//			return true;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return false;
+//		} finally {
+//			file.delete();
+//		}
+//	}
 
 	// Dem so dong cua file do:
+	// còn lỗi
 	private int countLines(File file, String extention)
 			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
 		int result = 0;

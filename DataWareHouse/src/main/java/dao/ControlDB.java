@@ -60,13 +60,13 @@ public class ControlDB {
 	}
 
 	// Phuong thuc lay cac thuoc tinh co trong bang config:
-	public List<Config> loadAllConfs(String condition)
+	public List<Config> loadAllConfs(int condition)
 			throws SQLException, ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		List<Config> listConfig = new ArrayList<Config>();
 		Connection conn = OpenConnection.openConnectWithDBName("controldata");
-		String selectConfig = "select * from myconfig where configName=?";
+		String selectConfig = "select * from myconfig where id=?";
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
-		ps.setString(1, condition);
+		ps.setInt(1, condition);
 		ResultSet rs = ps.executeQuery();
 
 		while (rs.next()) {
@@ -91,14 +91,17 @@ public class ControlDB {
 	}
 
 	// Phuong thuc lay cac thuoc tinh co trong bang log:
-	public Log getLogsWithStatus(String condition)
+	public Log getLogsWithStatus(String condition, int idconfig)
 			throws SQLException, ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		// List<Log> listLog = new ArrayList<Log>();
 		Log log = new Log();
 		Connection conn = OpenConnection.openConnectWithDBName("controldata");
-		String selectLog = "select * from logs where status=?";
+		String selectLog = "select * from logs where status=? and myconfig =?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
+		
 		ps.setString(1, condition);
+		ps.setInt(2, idconfig);
+		
 		ResultSet rs = ps.executeQuery();
 		rs.last();
 		if (rs.getRow() >= 1) {

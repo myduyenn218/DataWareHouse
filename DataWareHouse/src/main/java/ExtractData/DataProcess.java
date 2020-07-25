@@ -29,6 +29,7 @@ import dao.ControlDB;
 public class DataProcess {
 	static final String NUMBER_REGEX = "^[0-9]+$";
 	static final String DATE_FORMAT = "yyyy-MM-dd";
+	static final String ACTIVE_DATE = "31-12-2013";
 	private ControlDB cdb;
 	private String config_db_name;
 	private String target_db_name;
@@ -37,36 +38,45 @@ public class DataProcess {
 	public DataProcess() {
 		cdb = new ControlDB(this.config_db_name, this.table_name, this.target_db_name);
 	}
-
+	// Phương thức đọc những giá trị có trong file (value)
+	// cách nhau bởi dấu phân cách (delim).
 	private String readLines(String value, String delim) {
 		String values = "";
 		StringTokenizer stoken = new StringTokenizer(value, delim);
-		int countToken = stoken.countTokens() - 1;
+		// if (stoken.countTokens() > 0) {
+		// stoken.nextToken();
+		// }
+		int countToken = stoken.countTokens();
 		String lines = "(";
-		String token = "";
-		stoken.nextToken();
 		for (int j = 0; j < countToken; j++) {
-			token = stoken.nextToken();
-			lines += (j == countToken - 1) ? '"' + token.trim() + '"' + ")," : '"' + token.trim() + '"' + ",";
+			String token = stoken.nextToken();
+			if (Pattern.matches(NUMBER_REGEX, token)) {
+				lines += (j == countToken - 1) ? token.trim() + ")," : token.trim() + ",";
+			} else {
+				lines += (j == countToken - 1) ? "'" + token.trim() + "')," : "'" + token.trim() + "',";
+			}
 			values += lines;
 			lines = "";
 		}
 		return values;
 	}
-
+	// phương thức đọc file txt
 	public String readValuesTXT(File s_file, int count_field) {
+		// Nếu không tồn tại file thì trả về null
 		if (!s_file.exists()) {
 			return null;
 		}
 		String values = "";
 		String delim = "|"; // hoặc \t
 		try {
+			// Đọc 1 dòng dữ liệu trong file
 			BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(s_file), "utf8"));
 			String line = bReader.readLine();
 			if (line.indexOf("\t") != -1) {
 				delim = "\t";
 			}
-			// Kiểm tra xem tổng số field trong file có đúng format
+			// Kiểm tra xem tổng số field trong file có đúng format hay không
+			// có 11 trường
 			if (new StringTokenizer(line, delim).countTokens() != (count_field + 1)) {
 				bReader.close();
 				return null;
@@ -74,22 +84,15 @@ public class DataProcess {
 			// STT|Mã sinh viên|Họ lót|Tên|...-> line.split(delim)[0]="STT"
 			// không phải số
 			// nên là header -> bỏ qua line
-			if (Pattern.matches(NUMBER_REGEX, line.split(delim)[0])) { // Kiem
-																		// tra
-																		// xem
-																		// co
-																		// phan
-																		// header
-																		// khong
+			if (Pattern.matches(NUMBER_REGEX, line.split(delim)[0])) { // Kiem tra xem có phần header khong
+				//sau đó sẽ lấy dữ liệu từng dòng								
 				values += readLines(line + delim, delim);
 			}
 			while ((line = bReader.readLine()) != null) {
-				// line = 1|17130005|Đào Thị Kim|Anh|15-08-1999|DH17DTB|Công
-				// nghệ thông tin
-				// b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
-				// line + " " + delim = 1|17130005|Đào Thị
-				// Kim|Anh|15-08-1999|DH17DTB|Công nghệ
-				// thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
+				// line = 1|17130005|Đào Thị Kim|Anh|15-08-1999|DH17DTB|
+				//Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
+				// line + " " + delim = 1|17130005|Đào Thị Kim Anh|15-08-1999|DH17DTB|
+				//Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
 				// Nếu có field 11 thì dư khoảng trắng lên readLines() có
 				// trim(), còn 10 field
 				// thì fix lỗi out index
@@ -128,7 +131,7 @@ public class DataProcess {
 		}
 
 	}
-
+	// Phương thức đọc dữ liệu trong file .xlsx:
 	public String readValuesXLSX(File s_file, int countField) {
 		String values = "";
 		String value = "";
@@ -136,20 +139,33 @@ public class DataProcess {
 		try {
 			FileInputStream fileIn = new FileInputStream(s_file);
 			XSSFWorkbook workBook = new XSSFWorkbook(fileIn);
+			//lấy từng sheet
 			XSSFSheet sheet = workBook.getSheetAt(0);
+			//lấy từng hàng trong sheet
 			Iterator<Row> rows = sheet.iterator();
+			// Kiểm tra xem có phần header hay không, nếu không có phần header
+			// Gọi rows.next, nếu có header thì vị trí dòng dữ liệu là 1.
+			// Nếu kiểm tra mà không có header thì phải set lại cái row bắt đầu ở vị trí 0
 			if (rows.next().cellIterator().next().getCellType().equals(CellType.NUMERIC)) {
 				rows = sheet.iterator();
 			}
 			while (rows.hasNext()) {
 				Row row = rows.next();
-				if (row.getLastCellNum() < countField + 1 || row.getLastCellNum() > countField + 2) {
-					workBook.close();
-					return null;
-				}
-				Iterator<Cell> cells = row.cellIterator();
-				while (cells.hasNext()) {
-					Cell cell = cells.next();
+				// Kiểm tra coi cái số trường ở trong file excel có đúng với
+				// số trường có trong cái bảng mình tạo sẵn ở trong table
+				// staging không
+//				if (row.getLastCellNum() < countField - 1 || row.getLastCellNum() > countField) {
+//					workBook.close();
+//					return null;
+//				}
+				// Bắt đầu lấy giá trị trong các ô ra:
+				// Iterator<Cell> cells = row.cellIterator();
+				for (int i = 0; i < countField; i++) {
+					// Cell cell = cells.next();
+					if (i == countField - 1) {
+						value += DataProcess.ACTIVE_DATE;
+					}
+					Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 					CellType cellType = cell.getCellType();
 					switch (cellType) {
 					case NUMERIC:
@@ -182,7 +198,7 @@ public class DataProcess {
 						break;
 					}
 				}
-				if (row.getLastCellNum() == countField - 1) {
+				if (row.getLastCellNum() == countField) {
 					value += "|";
 				}
 				values += readLines(value, delim);
@@ -195,7 +211,7 @@ public class DataProcess {
 			return null;
 		}
 	}
-
+	// Ghi dữ liệu vào data staging
 	public boolean writeDataToBD(String column_list, String target_table, String values) throws ClassNotFoundException {
 		try {
 			if (cdb.insertValues(column_list, values, target_table))
