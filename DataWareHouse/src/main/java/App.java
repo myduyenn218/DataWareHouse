@@ -20,7 +20,9 @@ public class App {
 
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		
+		final String idConfig = args[0];
+		System.out.println(args.length);
+		System.out.println(idConfig);
 		// download file data
 		final DownloadFileServer d = new DownloadFileServer();
 		// load staging
@@ -33,7 +35,7 @@ public class App {
 			@Override
 			public void run() {
 				try {
-					d.run();
+					d.run(idConfig);
 //					ex.startExtract();
 //					loader.connectDB();
 //					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien");
@@ -51,7 +53,7 @@ public class App {
 					e.printStackTrace();
 				}
 			}
-		}, 0, 1, TimeUnit.MINUTES); // 1p 1 lần
+		}, 0, 5, TimeUnit.MINUTES); // 1p 1 lần
 
 	}
 }

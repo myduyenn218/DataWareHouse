@@ -64,29 +64,33 @@ public class DownloadFileServer {
 		return false;
 	}
 
-	public void run() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
+	public void run(String idConfig)
+			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		openControlDB();
 
-		String sql = "Select id, url_download, username_download, password_download, remote_file, path_file_local, type_file FROM myconfig";
+		String sql = "Select url_download, username_download, password_download, remote_file, path_file_local, type_file, format FROM myconfig WHERE id=?";
 		PreparedStatement p = CONNECTION_CONTROLLDATA.prepareStatement(sql);
+		p.setString(1, idConfig);
 		ResultSet resultSet = p.executeQuery();
-		String url, remoteFile, location, username, password, typeFile;
+		String url, remoteFile, location, username, password, typeFile, format;
 		resultSet.next(); // đọc dòng đầu tiên
 
-		int id = Integer.parseInt(resultSet.getString("id"));
+		int id = Integer.parseInt(idConfig);
 		url = resultSet.getString("url_download"); // http://drive.ecepvn.org:5000/webapi
 		username = resultSet.getString("username_download"); // guest_access
 		password = resultSet.getString("password_download"); // 123456
 		remoteFile = resultSet.getString("remote_file"); // /ECEP/song.nguyen/DW_2020/data
 		location = resultSet.getString("path_file_local"); // folder local
 		typeFile = resultSet.getString("type_file");
+		format = resultSet.getString("format");
 		p.close();
-		SynologyNas nas = new SynologyNas(url, username, password);
-		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
-
+		// select time download của file đã được download trước đó
 		sql = "SELECT time_download FROM logs WHERE id_filename =?";
 		PreparedStatement pre = null;
+
+		SynologyNas nas = new SynologyNas(url, username, password);
 		// lấy ra từng file trong data trên server
+		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
 
 		for (RemoteFile file : filePaths) {
 			System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
@@ -94,8 +98,10 @@ public class DownloadFileServer {
 			System.out.println("SQL: " + sql);
 
 			String[] type_file = typeFile.split(",");
+			// tải những loại file mà database cho phép
 			for (String type : type_file) {
-				if (file.getTypeFile().equals(type)) {
+				// và kiểm tra tên file theo đúng định dạng
+				if (file.getTypeFile().equals(type) && file.getName().toLowerCase().contains(format)) {
 					System.out.println("Tải");
 					pre = CONNECTION_CONTROLLDATA.prepareStatement(sql);
 					pre.setString(1, file.getName());
