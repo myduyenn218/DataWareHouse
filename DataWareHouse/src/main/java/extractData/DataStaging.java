@@ -1,4 +1,4 @@
-package ExtractData;
+package extractData;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -55,9 +55,9 @@ public class DataStaging {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		DataStaging dw = new DataStaging();
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Nhập id config cần download: ");
-		int id = sc.nextInt();
+//		Scanner sc = new Scanner(System.in);
+//		System.out.println("Nhập id config cần download: ");
+		int id = Integer.parseInt(args[0]);
 		dw.setConfig_id(id);
 		dw.setState("OK");
 		DataProcess dp = new DataProcess();
@@ -164,28 +164,6 @@ public class DataStaging {
 		LocalDateTime now = LocalDateTime.now();
 		return dtf.format(now);
 	}
-
-	// Chuyen file da load thanh cong vao thu muc success:
-//	private boolean moveFile(String target_dir, File file) {
-//		try {
-//			BufferedInputStream bReader = new BufferedInputStream(new FileInputStream(file));
-//			BufferedOutputStream bWriter = new BufferedOutputStream(
-//					new FileOutputStream(target_dir + File.separator + file.getName()));
-//			byte[] buff = new byte[1024 * 10];
-//			int data = 0;
-//			while ((data = bReader.read(buff)) != -1) {
-//				bWriter.write(buff, 0, data);
-//			}
-//			bReader.close();
-//			bWriter.close();
-//			return true;
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return false;
-//		} finally {
-//			file.delete();
-//		}
-//	}
 
 	// Dem so dong cua file do:
 	// còn lỗi

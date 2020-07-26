@@ -9,8 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.ecepvn.date_dim.Date_Dim;
 
-import ExtractData.ExtractData;
-import ExtractData.ExtractDataApp;
 import config.DBConnection;
 import config.OpenConnection;
 import load_datawarehouse.LoadDataWareHouse;
@@ -21,12 +19,10 @@ public class App {
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		final String idConfig = args[0];
-		System.out.println(args.length);
-		System.out.println(idConfig);
 		// download file data
 		final DownloadFileServer d = new DownloadFileServer();
 		// load staging
-		final ExtractDataApp ex = new ExtractDataApp();
+//		final ExtractDataApp ex = new ExtractDataApp();
 		// load data warehouse
 		final LoadDataWareHouse loader = new LoadDataWareHouse();
 		System.out.println("start");

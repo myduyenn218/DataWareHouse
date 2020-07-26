@@ -16,7 +16,6 @@ import org.ecepvn.date_dim.Date_Dim;
 
 import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
-import ExtractData.ExtractData;
 import config.DBConnection;
 import config.OpenConnection;
 import config.ReadProperties;
@@ -163,7 +162,7 @@ public class LoadDataWareHouse {
 						+ "  QUARTER_OF_YEAR text null, \n" + "  QUARTER_SINCE_2005 text null\n" + "  );";
 				connectDBWH.prepareStatement(sqlCreateTable).execute();
 			}
-			new ExtractData().loadCSV(connectDBWH, OUT_FILE, "date_dim", "" );
+//			new ExtractData().loadCSV(connectDBWH, OUT_FILE, "date_dim", "" );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -184,7 +183,7 @@ public class LoadDataWareHouse {
 			}
 			System.out.println("loading..");
 			// test truyền vào danh sách các field muốn insert
-			new ExtractData().loadCSV(connect, pathFile, tableName, fields);
+//			new ExtractData().loadCSV(connect, pathFile, tableName, fields);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
