@@ -47,16 +47,16 @@ public class SendMail {
 
 			// 4) create new MimeBodyPart object and set DataHandler object to this object
 			// Create the message body part
-	         BodyPart messageBodyPart = new MimeBodyPart();
+			BodyPart messageBodyPart = new MimeBodyPart();
 
-	         // Fill the message
-	         messageBodyPart.setText(body);
-	         
+			// Fill the message
+			messageBodyPart.setText(body);
+
 			// 5) create Multipart object and add MimeBodyPart objects to this object
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(messageBodyPart1);
-			  // Set text message part
-	         multipart.addBodyPart(messageBodyPart);
+			// Set text message part
+			multipart.addBodyPart(messageBodyPart);
 
 			// 6) set the multiplart object to the message object
 			message.setContent(multipart);

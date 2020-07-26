@@ -93,10 +93,6 @@ public class DownloadFileServer {
 		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
 
 		for (RemoteFile file : filePaths) {
-			System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
-					file.isDir(), file.getModifyTime());
-			System.out.println("SQL: " + sql);
-
 			String[] type_file = typeFile.split(",");
 			// tải những loại file mà database cho phép
 			for (String type : type_file) {
@@ -122,6 +118,9 @@ public class DownloadFileServer {
 							} else {
 								insertLog("Fails", id, "NotReadyTransfrom", file.getName());
 							}
+							System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
+									file.isDir(), file.getModifyTime());
+							System.out.println("SQL: " + sql);
 						}
 					} else {
 						boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
@@ -131,6 +130,9 @@ public class DownloadFileServer {
 						} else {
 							insertLog("Fails", id, "NotReadyTransfrom", file.getName());
 						}
+						System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
+								file.isDir(), file.getModifyTime());
+						System.out.println("SQL: " + sql);
 					}
 					pre.close();
 				}

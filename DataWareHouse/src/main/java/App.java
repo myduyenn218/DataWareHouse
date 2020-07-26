@@ -1,17 +1,12 @@
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.ecepvn.date_dim.Date_Dim;
-
-import config.DBConnection;
-import config.OpenConnection;
-import load_datawarehouse.LoadDataWareHouse;
+import config.ProcessControlDB;
+import extractData.DataStaging;
 import myduyen.Download.DownloadFileServer;
 
 public class App {
@@ -19,20 +14,29 @@ public class App {
 	public static void main(String[] args)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
 		final String idConfig = args[0];
+		// process
+		final ProcessControlDB p = new ProcessControlDB();
 		// download file data
 		final DownloadFileServer d = new DownloadFileServer();
 		// load staging
-//		final ExtractDataApp ex = new ExtractDataApp();
+		final DataStaging ex = new DataStaging();
 		// load data warehouse
-		final LoadDataWareHouse loader = new LoadDataWareHouse();
+//		final LoadDataWareHouse loader = new LoadDataWareHouse();
 		System.out.println("start");
 		ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 		ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				try {
+					//begin 1 process
+					p.insert(idConfig);
+					// download
+					
 					d.run(idConfig);
-//					ex.startExtract();
+					System.out.println("end");
+					
+					// extract
+					ex.run(idConfig);
 //					loader.connectDB();
 //					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien");
 				} catch (ClassNotFoundException e) {
@@ -49,7 +53,7 @@ public class App {
 					e.printStackTrace();
 				}
 			}
-		}, 0, 5, TimeUnit.MINUTES); // 1p 1 lần
+		}, 0, 5, TimeUnit.MINUTES); // 5p 1 lần
 
 	}
 }
