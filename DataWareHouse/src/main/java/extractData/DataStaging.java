@@ -102,7 +102,7 @@ public class DataStaging {
 						values = dp.readValuesXLSX(file, str.countTokens());
 						extention = ".xlsx";
 					}
-					System.out.println(values);
+//					System.out.println(values);
 					// Nếu mà đọc đc dữ liệu rồi
 					if (values != null) {
 						String table = "logs";

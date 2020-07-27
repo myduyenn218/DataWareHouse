@@ -38,6 +38,7 @@ public class DataProcess {
 	public DataProcess() {
 		cdb = new ControlDB(this.config_db_name, this.table_name, this.target_db_name);
 	}
+
 	// Phương thức đọc những giá trị có trong file (value)
 	// cách nhau bởi dấu phân cách (delim).
 	private String readLines(String value, String delim) {
@@ -60,6 +61,7 @@ public class DataProcess {
 		}
 		return values;
 	}
+
 	// phương thức đọc file txt
 	public String readValuesTXT(File s_file, int count_field) {
 		// Nếu không tồn tại file thì trả về null
@@ -85,14 +87,14 @@ public class DataProcess {
 			// không phải số
 			// nên là header -> bỏ qua line
 			if (Pattern.matches(NUMBER_REGEX, line.split(delim)[0])) { // Kiem tra xem có phần header khong
-				//sau đó sẽ lấy dữ liệu từng dòng								
+				// sau đó sẽ lấy dữ liệu từng dòng
 				values += readLines(line + delim, delim);
 			}
 			while ((line = bReader.readLine()) != null) {
 				// line = 1|17130005|Đào Thị Kim|Anh|15-08-1999|DH17DTB|
-				//Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
+				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
 				// line + " " + delim = 1|17130005|Đào Thị Kim Anh|15-08-1999|DH17DTB|
-				//Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
+				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
 				// Nếu có field 11 thì dư khoảng trắng lên readLines() có
 				// trim(), còn 10 field
 				// thì fix lỗi out index
@@ -131,6 +133,7 @@ public class DataProcess {
 		}
 
 	}
+
 	// Phương thức đọc dữ liệu trong file .xlsx:
 	public String readValuesXLSX(File s_file, int countField) {
 		String values = "";
@@ -139,9 +142,9 @@ public class DataProcess {
 		try {
 			FileInputStream fileIn = new FileInputStream(s_file);
 			XSSFWorkbook workBook = new XSSFWorkbook(fileIn);
-			//lấy từng sheet
+			// lấy từng sheet
 			XSSFSheet sheet = workBook.getSheetAt(0);
-			//lấy từng hàng trong sheet
+			// lấy từng hàng trong sheet
 			Iterator<Row> rows = sheet.iterator();
 			// Kiểm tra xem có phần header hay không, nếu không có phần header
 			// Gọi rows.next, nếu có header thì vị trí dòng dữ liệu là 1.
@@ -194,7 +197,10 @@ public class DataProcess {
 						break;
 					case BLANK:
 					default:
-						value += " " + delim;
+						if (i < 2) {
+							value += (long) cell.getNumericCellValue() + delim;
+						} else
+							value += " " + delim;
 						break;
 					}
 				}
@@ -211,6 +217,7 @@ public class DataProcess {
 			return null;
 		}
 	}
+
 	// Ghi dữ liệu vào data staging
 	public boolean writeDataToBD(String column_list, String target_table, String values) throws ClassNotFoundException {
 		try {
