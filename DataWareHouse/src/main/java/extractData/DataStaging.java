@@ -23,9 +23,7 @@ import dao.ControlDB;
 import dao.Log;
 
 public class DataStaging {
-	static final String EXT_TEXT = ".txt";
-	static final String EXT_CSV = ".csv";
-	static final String EXT_EXCEL = ".xlsx";
+	
 	private int config_id;
 	private String state;
 
@@ -45,6 +43,7 @@ public class DataStaging {
 		this.state = state;
 	}
 
+	// khai báo để gọi sang chạy hệ thống
 	public void run(String idCongfig) {
 		int id = Integer.parseInt(idCongfig);
 		setConfig_id(id);
@@ -62,9 +61,10 @@ public class DataStaging {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void extractToDB(DataProcess dp)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
+		// list các config
 		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong config
 		for (Config configuration : lstConf) {
@@ -75,7 +75,7 @@ public class DataStaging {
 			String column_list = configuration.getFields();
 //			String variabless = configuration.getVariabless();
 			System.out.println(target_table);
-			// Lấy các trường có trong dòng log đầu tiên có status = OK;
+			// Lấy các trường có trong dòng log có status = OK ứng với từng config;
 			Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
 
 			// Lấy config_name từ trong config ra
@@ -88,9 +88,10 @@ public class DataStaging {
 			File file = new File(sourceFile);
 			// System.out.println(file.exists());
 			// Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
-			extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
-					: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
+			extention = file.getName().substring(file.getName().indexOf('.'));
+			System.out.println(extention);
 			if (file.exists()) {
+				// lấy file có status OK
 				if (log.getStatus().equals("OK")) {
 					String values = "";
 					// Nếu file là .txt thì đọc file .txt
@@ -102,8 +103,8 @@ public class DataStaging {
 						values = dp.readValuesXLSX(file, str.countTokens());
 						extention = ".xlsx";
 					}
-					System.out.println(values);
-					// Nếu mà đọc đc dữ liệu rồi
+//					System.out.println(values);
+					// Nếu mà đọc đc dữ liệu hết rồi
 					if (values != null) {
 						String table = "logs";
 						String transform;
@@ -112,15 +113,15 @@ public class DataStaging {
 						// set thời gian
 						String timestamp = getCurrentTime();
 						// đếm số dòng
-						String stagin_load_count = "";
-						try {
-							stagin_load_count = countLines(file, extention) + "";
-						} catch (InvalidFormatException
-								| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-							e.printStackTrace();
-						}
+//						String stagin_load_count = "";
+//						try {
+//							stagin_load_count = countLines(file, extention) + "";
+//						} catch (InvalidFormatException
+//								| org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+//							e.printStackTrace();
+//						}
 						//
-						String target_dir;
+						
 						// rồi ghi dữ liệu vô bảng
 						// nếu ghi được rồi
 
@@ -131,15 +132,14 @@ public class DataStaging {
 							dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
 //							target_dir = configuration.getSuccessDir();
 //							 if (moveFile(target_dir, file));
+							
 							// Nếu không ghi được
 						} else {
-							// thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK thành Not
-							// TR
+							// thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK thành Not TR
 							status = "Not TR";
 							transform = "FAIL";
 							dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
-//							target_dir = configuration.getErrorDir();
-//							if (moveFile(target_dir, file));
+
 						}
 					}
 				}
@@ -163,43 +163,43 @@ public class DataStaging {
 
 	// Dem so dong cua file do:
 	// còn lỗi
-	private int countLines(File file, String extention)
-			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
-		int result = 0;
-		XSSFWorkbook workBooks = null;
-		try {
-			if (extention.indexOf(".txt") != -1) {
-				BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-				String line;
-				while ((line = bReader.readLine()) != null) {
-					if (!line.trim().isEmpty()) {
-						result++;
-					}
-				}
-				bReader.close();
-			} else if (extention.indexOf(".xlsx") != -1) {
-				workBooks = new XSSFWorkbook(file);
-				XSSFSheet sheet = workBooks.getSheetAt(0);
-				Iterator<Row> rows = sheet.iterator();
-				rows.next();
-				while (rows.hasNext()) {
-					rows.next();
-					result++;
-				}
-				return result;
-			}
-
-		} catch (IOException | org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
-			e.printStackTrace();
-		} finally {
-			if (workBooks != null) {
-				try {
-					workBooks.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-	}
+//	private int countLines(File file, String extention)
+//			throws InvalidFormatException, org.apache.poi.openxml4j.exceptions.InvalidFormatException {
+//		int result = 0;
+//		XSSFWorkbook workBooks = null;
+//		try {
+//			if (extention.indexOf(".txt") != -1) {
+//				BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+//				String line;
+//				while ((line = bReader.readLine()) != null) {
+//					if (!line.trim().isEmpty()) {
+//						result++;
+//					}
+//				}
+//				bReader.close();
+//			} else if (extention.indexOf(".xlsx") != -1) {
+//				workBooks = new XSSFWorkbook(file);
+//				XSSFSheet sheet = workBooks.getSheetAt(0);
+//				Iterator<Row> rows = sheet.iterator();
+//				rows.next();
+//				while (rows.hasNext()) {
+//					rows.next();
+//					result++;
+//				}
+//				return result;
+//			}
+//
+//		} catch (IOException | org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (workBooks != null) {
+//				try {
+//					workBooks.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		return result;
+//	}
 }
