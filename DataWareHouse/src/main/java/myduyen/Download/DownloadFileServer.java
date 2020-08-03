@@ -98,7 +98,7 @@ public class DownloadFileServer {
 			for (String type : type_file) {
 				// và kiểm tra tên file theo đúng định dạng
 				if (file.getTypeFile().equals(type) && file.getName().toLowerCase().contains(format)) {
-//					System.out.println("Tải");
+					System.out.println("Tải");
 					pre = CONNECTION_CONTROLLDATA.prepareStatement(sql);
 					pre.setString(1, file.getName());
 					ResultSet re = pre.executeQuery();
@@ -120,7 +120,7 @@ public class DownloadFileServer {
 							}
 							System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
 									file.isDir(), file.getModifyTime());
-//							System.out.println("SQL: " + sql);
+							System.out.println("SQL: " + sql);
 						}
 					} else {
 						boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
@@ -132,7 +132,7 @@ public class DownloadFileServer {
 						}
 						System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
 								file.isDir(), file.getModifyTime());
-//						System.out.println("SQL: " + sql);
+						System.out.println("SQL: " + sql);
 					}
 					pre.close();
 				}

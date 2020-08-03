@@ -37,7 +37,7 @@ public class ProcessControlDB {
 
 		Connection connection;
 		int id = Integer.parseInt(idConfig);
-		String sql = "INSERT INTO process SET idConfig=?, process_status=?";
+		String sql = "INSERT INTO process SET idConfig=?, status=?";
 		try {
 			connection = OpenConnection.openConnectWithDBName("controldata");
 			PreparedStatement ps1 = connection.prepareStatement(sql);

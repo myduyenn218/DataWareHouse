@@ -23,7 +23,9 @@ import dao.ControlDB;
 import dao.Log;
 
 public class DataStaging {
-	
+	static final String EXT_TEXT = ".txt";
+	static final String EXT_CSV = ".csv";
+	static final String EXT_EXCEL = ".xlsx";
 	private int config_id;
 	private String state;
 
@@ -86,8 +88,8 @@ public class DataStaging {
 			File file = new File(sourceFile);
 			// System.out.println(file.exists());
 			// Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
-			extention = file.getName().substring(file.getName().indexOf('.'));
-			System.out.println(extention);
+			extention = file.getPath().endsWith(".xlsx") ? EXT_EXCEL
+					: file.getPath().endsWith(".txt") ? EXT_TEXT : EXT_CSV;
 			if (file.exists()) {
 				if (log.getStatus().equals("OK")) {
 					String values = "";
@@ -100,7 +102,7 @@ public class DataStaging {
 						values = dp.readValuesXLSX(file, str.countTokens());
 						extention = ".xlsx";
 					}
-//					System.out.println(values);
+					System.out.println(values);
 					// Nếu mà đọc đc dữ liệu rồi
 					if (values != null) {
 						String table = "logs";

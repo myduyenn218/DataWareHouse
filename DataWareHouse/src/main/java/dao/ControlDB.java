@@ -98,10 +98,10 @@ public class ControlDB {
 		Connection conn = OpenConnection.openConnectWithDBName("controldata");
 		String selectLog = "select * from logs where status=? and myconfig =?";
 		PreparedStatement ps = conn.prepareStatement(selectLog);
-
+		
 		ps.setString(1, condition);
 		ps.setInt(2, idconfig);
-
+		
 		ResultSet rs = ps.executeQuery();
 		rs.last();
 		if (rs.getRow() >= 1) {
@@ -121,16 +121,13 @@ public class ControlDB {
 	public boolean insertValues(String fieldName, String values, String targetTable)
 			throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
-//		System.out.println(sql);
-		System.out.println("Start load file: " + fieldName);
+		System.out.println(sql);
 		try {
 			pst = OpenConnection.openConnectWithDBName(this.target_db_name).prepareStatement(sql);
 			pst.executeUpdate();
-			System.out.println("Load file successfully");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Load file fails");
 			return false;
 		} finally {
 			try {
@@ -139,11 +136,9 @@ public class ControlDB {
 				if (rs != null)
 					rs.close();
 			} catch (SQLException e) {
-				System.out.println("Load file fails");
 				e.printStackTrace();
 			}
 
-			
 		}
 	}
 
