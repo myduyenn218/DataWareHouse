@@ -102,7 +102,7 @@ public class DataProcess {
 				// line = 1|17130005|Đào Thị Kim|Anh|15-08-1999|DH17DTB|
 				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
 				// line + " " + delim = 1|17130005|Đào Thị Kim Anh|15-08-1999|DH17DTB|
-				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
+				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre| |
 				// Nếu có field 11 thì dư khoảng trắng lên readLines() có
 				// trim(), còn 10 field
 				// thì fix lỗi out index
@@ -234,6 +234,7 @@ public class DataProcess {
 			return null;
 		}
 	}
+	
 
 	// Ghi dữ liệu vào data staging
 	public boolean writeDataToBD(String column_list, String target_table, String values) throws ClassNotFoundException {

@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Log {
-	// Các trường của Loan
+
 	private String idLog;
 	private int idConfig;
 	private String status;
 	private String result;
-	private int numColumn;
+	//private int numColumn;
 	private String fileName;
 	private Date dateUserInsertLog;
 	private Date dateLoadToStaging;
@@ -39,9 +39,9 @@ public class Log {
 		return result;
 	}
 
-	public int getNumColumn() {
-		return numColumn;
-	}
+//	public int getNumColumn() {
+//		return numColumn;
+//	}
 
 	public String getFileName() {
 		return fileName;
@@ -71,9 +71,9 @@ public class Log {
 		this.result = result;
 	}
 
-	public void setNumColumn(int numColumn) {
-		this.numColumn = numColumn;
-	}
+//	public void setNumColumn(int numColumn) {
+//		this.numColumn = numColumn;
+//	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
@@ -90,7 +90,7 @@ public class Log {
 	@Override
 	public String toString() {
 		return "Log [idLog=" + idLog + ", idConfig=" + idConfig + ", state=" + status + ", result=" + result
-				+ ", numColumn=" + numColumn + ", fileName=" + fileName + ", dateUserInsertLog=" + dateUserInsertLog
+				 + ", fileName=" + fileName + ", dateUserInsertLog=" + dateUserInsertLog
 				+ ", dateLoadToStaging=" + dateLoadToStaging + "]";
 	}
 
