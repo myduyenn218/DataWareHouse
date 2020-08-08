@@ -1,4 +1,4 @@
-package myduyen.Download;
+package synologynas;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +15,10 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Hex;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import config.SendMail;
+import synologynas.exception.ListFileException;
+import synologynas.exception.LoginException;
 
 public class SynologyNas {
 	private String sid;
@@ -63,7 +67,7 @@ public class SynologyNas {
 		return info;
 	}
 
-	private boolean login() {
+	private boolean login() throws LoginException {
 		final String url = this.baseUrl + "/auth.cgi";
 		final LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
 		params.put("api", "SYNO.API.Auth");
@@ -78,8 +82,8 @@ public class SynologyNas {
 		final Response response = getResponse(url, params);
 
 		if (response.isSuccess() == false) {
-			System.out.println(response.getErrorCode());
-			return false;
+			System.out.println();
+			throw new LoginException(response.getErrorCode() + "");
 		}
 
 		sid = (String) response.getData().get("sid");
@@ -87,21 +91,24 @@ public class SynologyNas {
 		return isLoggedIn;
 	}
 
-	public ArrayList<RemoteFile> list(final String folder, final int offset, final int limit) {
+	public ArrayList<RemoteFile> list(final String folder, final int offset, final int limit) throws LoginException, ListFileException {
 		return list(folder, offset, limit, "name", "asc");
 	}
 
 	public ArrayList<RemoteFile> list(final String folder, int offset, final int limit, final String sortBy,
-			final String sortDirection) {
+			final String sortDirection) throws LoginException, ListFileException {
 //		5. Kết nối Synology Nas: login()
 		if (!isLoggedIn) {
 			if (!login()) {
-				return null;
+				throw new LoginException();
+
 			}
 		}
 
 		final ArrayList<String> apiInfo = retriveInfo("SYNO.FileStation.List");
-
+		if (apiInfo == null) {
+			throw new ListFileException("retriveInfo fail");
+		}
 		final String url = this.baseUrl + "/" + apiInfo.get(1);
 		final LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
 		params.put("api", "SYNO.FileStation.List");
@@ -120,7 +127,7 @@ public class SynologyNas {
 
 		if (response.isSuccess() == false) {
 			System.out.println(response.getErrorCode());
-			return null;
+			throw new ListFileException(response.getErrorCode() + "");
 		}
 
 		final JSONObject data = response.getData();
@@ -141,15 +148,17 @@ public class SynologyNas {
 		return filePaths;
 	}
 
-	public String getMD5(String path) {
+	public String getMD5(String path) throws LoginException, MD5Exception {
 		if (!isLoggedIn) {
 			if (!login()) {
-				return null;
+				throw new LoginException();
 			}
 		}
 
 		final ArrayList<String> apiInfo = retriveInfo("SYNO.FileStation.List");
-
+		if (apiInfo == null) {
+			throw new MD5Exception("retriveInfo fail");
+		}
 		final String url = this.baseUrl + "/" + apiInfo.get(1);
 		final LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
 		params.put("api", "SYNO.FileStation.MD5");
@@ -161,7 +170,8 @@ public class SynologyNas {
 
 		if (response.isSuccess() == false) {
 			System.out.println(response.getErrorCode());
-			return null;
+			throw new MD5Exception("Start get MD5 fail");
+
 		}
 
 		JSONObject data = response.getData();
@@ -178,8 +188,10 @@ public class SynologyNas {
 			response = getResponse(url, params);
 
 			if (response.isSuccess() == false) {
+
 				System.out.println(response.getErrorCode());
-				return null;
+
+				throw new MD5Exception(response.getErrorCode() + "");
 			}
 
 			data = response.getData();
@@ -191,27 +203,15 @@ public class SynologyNas {
 			}
 
 		}
-//		// stop
-//		params.clear();
-//		params.put("api", "SYNO.FileStation.MD5");
-//		params.put("_sid", sid);
-//		params.put("version", apiInfo.get(0));
-//		params.put("method", "stop");
-//		params.put("taskid", taskid);
-//		response = getResponse(url, params);
-//
-//		if (response.isSuccess() == false) {
-//			System.out.println(response.getErrorCode());
-//			return null;
-//		}
 
 		return md5;
 	}
 
-	public boolean download(String remoteFile, String localFile) {
+	public boolean download(String remoteFile, String localFile) throws LoginException {
 		if (!isLoggedIn) {
 			if (!login()) {
-				return false;
+				throw new LoginException();
+
 			}
 		}
 

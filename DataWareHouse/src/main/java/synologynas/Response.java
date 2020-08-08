@@ -1,4 +1,4 @@
-package myduyen.Download;
+package synologynas;
 import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;

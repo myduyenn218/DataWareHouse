@@ -1,4 +1,4 @@
-package myduyen.Download;
+package synologynas;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;

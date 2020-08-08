@@ -11,6 +11,12 @@ import java.util.ArrayList;
 import config.DBConnection;
 import config.OpenConnection;
 import config.ReadProperties;
+import config.SendMail;
+import synologynas.MD5Exception;
+import synologynas.RemoteFile;
+import synologynas.SynologyNas;
+import synologynas.exception.ListFileException;
+import synologynas.exception.LoginException;
 
 /**
  * App
@@ -24,8 +30,8 @@ public class DownloadFileServer {
 		}
 	}
 
-	public void closeControlDB() throws SQLException { 
-		
+	public void closeControlDB() throws SQLException {
+
 		if (CONNECTION_CONTROLLDATA != null) {
 			CONNECTION_CONTROLLDATA.close();
 		}
@@ -50,7 +56,12 @@ public class DownloadFileServer {
 	}
 
 	private boolean downloadFile(SynologyNas nas, String remotePath, String localPath) {
-		nas.download(remotePath, localPath);
+		try {
+			nas.download(remotePath, localPath);
+		} catch (LoginException e1) {
+			SendMail.sendMail("Thông tin debug data", e1.getMessage(), "Đăng nhập thất bại!");
+			e1.printStackTrace();
+		}
 
 		try {
 			String remoteMd5 = nas.getMD5(remotePath);
@@ -59,6 +70,12 @@ public class DownloadFileServer {
 		} catch (NoSuchAlgorithmException e) { // TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) { // TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MD5Exception e) {
+			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Lấy MD5 trên server thất bại!");
+			e.printStackTrace();
+		} catch (LoginException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -95,7 +112,19 @@ public class DownloadFileServer {
 		SynologyNas nas = new SynologyNas(url, username, password);
 //		5. Kết nối Synology Nas: login() trong method list có kiểm tra login chưa. chưa login thì login
 //		6. Gọi hàm list(final String folder, final int offset, final int limit) trả về danh sách file trong folder
-		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
+
+		ArrayList<RemoteFile> filePaths = null;
+		try {
+			filePaths = nas.list(remoteFile, 0, 0);
+		} catch (LoginException e) {
+//			Gửi thông báo lỗi về mail
+			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Đăng nhập thất bại!");
+			e.printStackTrace();
+		} catch (ListFileException e) {
+			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Lấy ra danh sách file thất bại!");
+			e.printStackTrace();
+		}
+
 //		7. Duyệt từng file
 		for (RemoteFile file : filePaths) {
 			String[] type_file = typeFile.split(",");
@@ -152,9 +181,5 @@ public class DownloadFileServer {
 //		closeControlDB(); bug sql khoong dongs duocjw
 	}
 
-	public DownloadFileServer() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-
-//		run();
-	}
 
 }

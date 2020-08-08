@@ -1,4 +1,4 @@
-package myduyen.Download;
+package synologynas;
 
 public class RemoteFile {
 	private String path;
