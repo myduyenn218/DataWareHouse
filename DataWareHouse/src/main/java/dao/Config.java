@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class Config {
-	// Các trường của Loan
-	private int idConf;
+		private int idConf;
 	private String configName;// Trường này là tên của config ứng với kiểu file
 								// vd:f_txt.
 	private String url_db_staging;
@@ -23,7 +22,7 @@ public class Config {
 	private String username_db;
 	private String password_db;
 	private String fields;
-	// Trường này trở đi là có trong config của Phượng
+	
 //	private String targetTable;
 //	private String fileType;
 //	private String importDir;

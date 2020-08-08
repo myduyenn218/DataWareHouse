@@ -42,20 +42,27 @@ public class DataProcess {
 	// Phương thức đọc những giá trị có trong file (value)
 	// cách nhau bởi dấu phân cách (delim).
 	private String readLines(String value, String delim) {
+		// dữ liệu là 1 chuỗi
 		String values = "";
+		// cắt thành từng stoken dựa theo delim
 		StringTokenizer stoken = new StringTokenizer(value, delim);
 		// if (stoken.countTokens() > 0) {
 		// stoken.nextToken();
 		// }
+		// số token sẽ bằng số trường
 		int countToken = stoken.countTokens();
+		// đọc từng dòng mở đầu bằng dấu "("
 		String lines = "(";
 		for (int j = 0; j < countToken; j++) {
 			String token = stoken.nextToken();
+			// nếu kiểu dữ liệu là số thì sẽ bt  dạng (17130008,....)
 			if (Pattern.matches(NUMBER_REGEX, token)) {
 				lines += (j == countToken - 1) ? token.trim() + ")," : token.trim() + ",";
 			} else {
+				// nếu kiểu dữ liệu không là số thì bỏ vào dấu nháy đơn dạng (17130008,'abc',...)
 				lines += (j == countToken - 1) ? "'" + token.trim() + "')," : "'" + token.trim() + "',";
 			}
+			// dữ liệu trả về là chuỗi các dòng
 			values += lines;
 			lines = "";
 		}
@@ -74,6 +81,7 @@ public class DataProcess {
 			// Đọc 1 dòng dữ liệu trong file
 			BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(s_file), "utf8"));
 			String line = bReader.readLine();
+			// dữ liệu được cắt bởi dấu "\t"
 			if (line.indexOf("\t") != -1) {
 				delim = "\t";
 			}
@@ -94,7 +102,7 @@ public class DataProcess {
 				// line = 1|17130005|Đào Thị Kim|Anh|15-08-1999|DH17DTB|
 				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc
 				// line + " " + delim = 1|17130005|Đào Thị Kim Anh|15-08-1999|DH17DTB|
-				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre|abc |
+				// Công nghệ thông tin b|0123456789|17130005st@hcmuaf.edu.vn|Bến Tre| |
 				// Nếu có field 11 thì dư khoảng trắng lên readLines() có
 				// trim(), còn 10 field
 				// thì fix lỗi out index
@@ -114,17 +122,23 @@ public class DataProcess {
 		ResultSet rs = null;
 		Connection conn = null;
 		try {
+			// kết nối datastaging
 			conn = OpenConnection.openConnectWithDBName(db_name);
+			// selcet tất cả trường của staging
 			String selectConfig = "select * from " + table_name;
+			// thực hiện câu select
 			PreparedStatement ps = conn.prepareStatement(selectConfig);
+			// trả về resultset
 			return rs = ps.executeQuery();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		} finally {
 			try {
+				// kết quả rỗng thì kết thúc
 				if (rs != null)
 					rs.close();
+				// Không kết nối được cũng kết thúc
 				if (conn != null)
 					conn.close();
 			} catch (SQLException e) {
@@ -197,9 +211,12 @@ public class DataProcess {
 						break;
 					case BLANK:
 					default:
+						// kiểm tra lỗi file những dòng cuối cùng của file 
+						// 2 cột đầu cho dạng int 
 						if (i < 2) {
 							value += (long) cell.getNumericCellValue() + delim;
 						} else
+							//còn lại là dạng chuỗi
 							value += " " + delim;
 						break;
 					}
@@ -217,6 +234,7 @@ public class DataProcess {
 			return null;
 		}
 	}
+	
 
 	// Ghi dữ liệu vào data staging
 	public boolean writeDataToBD(String column_list, String target_table, String values) throws ClassNotFoundException {

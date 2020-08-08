@@ -63,12 +63,17 @@ public class ControlDB {
 	public List<Config> loadAllConfs(int condition)
 			throws SQLException, ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		List<Config> listConfig = new ArrayList<Config>();
+		// kết nổi database controldata
 		Connection conn = OpenConnection.openConnectWithDBName("controldata");
+		// select các trường của config
 		String selectConfig = "select * from myconfig where id=?";
+		// thực hiện câu sql
 		PreparedStatement ps = conn.prepareStatement(selectConfig);
+		
 		ps.setInt(1, condition);
 		ResultSet rs = ps.executeQuery();
 
+		// lấy tất cả các trường cho vào list
 		while (rs.next()) {
 			Config conf = new Config();
 			conf.setIdConf(rs.getInt("id"));
@@ -95,10 +100,13 @@ public class ControlDB {
 			throws SQLException, ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		// List<Log> listLog = new ArrayList<Log>();
 		Log log = new Log();
+		// thực hiện kết nối controldata
 		Connection conn = OpenConnection.openConnectWithDBName("controldata");
+		// thực hiện lấy các trường trong logs ứng với id_config và stastus
 		String selectLog = "select * from logs where status=? and myconfig =?";
+		// thực hiện câu query
 		PreparedStatement ps = conn.prepareStatement(selectLog);
-
+		
 		ps.setString(1, condition);
 		ps.setInt(2, idconfig);
 
@@ -110,7 +118,7 @@ public class ControlDB {
 			log.setIdConfig(rs.getInt("myconfig"));
 			log.setStatus(rs.getString("status"));
 			log.setResult(rs.getString("transform"));
-			log.setNumColumn(rs.getInt("numColumn"));
+//			log.setNumColumn(rs.getInt("numColumn"));
 //			log.setFileName(rs.getString("fileName"));
 		}
 //		System.out.println(log.toString());
@@ -120,16 +128,21 @@ public class ControlDB {
 	// Chen du lieu vao bang trong database staging:
 	public boolean insertValues(String fieldName, String values, String targetTable)
 			throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
+		// khai báo câu lệnh sql insert vào table cần insert
 		sql = "INSERT INTO " + targetTable + "(" + fieldName + ") VALUES " + values;
 //		System.out.println(sql);
 		System.out.println("Start load file: " + fieldName);
 		try {
+			// mở kết nối với staging sau đó thực hiện câu lệnh sql
 			pst = OpenConnection.openConnectWithDBName(this.target_db_name).prepareStatement(sql);
+			//  kết quả update bảng staging vừa load vào
 			pst.executeUpdate();
+			// nếu thành công thông báo thành công
 			System.out.println("Load file successfully");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			// không thành công thông báo thất bại
 			System.out.println("Load file fails");
 			return false;
 		} finally {
@@ -148,42 +161,79 @@ public class ControlDB {
 	}
 
 	// Chen du lieu vao log:
-	public boolean insertLog(String table, String file_status, int config_id, String timestamp,
-			String stagin_load_count, String file_name)
-			throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
-		sql = "INSERT INTO " + table + "(id_filename,idConfig,state,numColumn,dateUserInsert) value (?,?,?,?,?)";
-		try {
-			pst = OpenConnection.openConnectWithDBName(this.config_db_name).prepareStatement(sql);
-			pst.setString(1, file_name);
-			pst.setInt(2, config_id);
-			pst.setString(3, file_status);
-			pst.setInt(4, Integer.parseInt(stagin_load_count));
-			pst.setString(5, timestamp);
-			pst.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
+//	public boolean insertLog(String table, String file_status, int config_id, String timestamp,
+//			String stagin_load_count, String file_name)
+//			throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
+//		sql = "INSERT INTO " + table + "(id_filename,idConfig,state,dateUserInsert) value (?,?,?,?)";
+//		try {
+//			pst = OpenConnection.openConnectWithDBName(this.config_db_name).prepareStatement(sql);
+//			pst.setString(1, file_name);
+//			pst.setInt(2, config_id);
+//			pst.setString(3, file_status);
+//	
+//			pst.setString(4, timestamp);
+//			pst.executeUpdate();
+//			return true;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		} finally {
+//			try {
+//				if (pst != null)
+//					pst.close();
+//				if (rs != null)
+//					rs.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//
+//		}
+//	}
+	//phương thức kiểm tra bảng có tồn tại hay ko
+		public int checkTableExist(Connection connection, String target_Table, String target_db_name) throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
+			String sql = "SELECT COUNT(*)\r\n" + "FROM information_schema.tables \r\n" + "WHERE table_schema = '" + target_db_name
+					+ "' \r\n" + "AND table_name = '" + target_Table + "';";
+			PreparedStatement statement = null;
+			ResultSet res = null;
 			try {
-				if (pst != null)
-					pst.close();
-				if (rs != null)
-					rs.close();
+				pst = OpenConnection.openConnectWithDBName(this.target_db_name).prepareStatement(sql);
+				ResultSet rs = pst.executeQuery();
+				while (rs.next()) {
+					return rs.getInt(1);
+				}
+
 			} catch (SQLException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				try {
+					if (res != null) {
+						res.close();
+					}
+					if (statement != null) {
+						statement.close();
+					}
+
+				} catch (SQLException e) {
+					System.out.println("Khong the tao bang");
+					e.printStackTrace();
+				}
 			}
-
+			return 0;
 		}
-	}
 
+	// Upload logs sau khi thực hiện load vào staging
 	public boolean updateLogAfterLoadToStaging(String status, String result, String fileTimeStamp, String fileName)
 			throws ClassNotFoundException, NoSuchAlgorithmException, IOException {
 		Connection connection;
+		//khai báo câu query upload
 		String sql = "UPDATE logs SET status=?, transform=?, dateLoadToStaging=? WHERE id_fileName=?";
 		try {
+			// kết nối với ontroldata
 			connection = OpenConnection.openConnectWithDBName("controldata");
+			// thực hiện câu sql
 			PreparedStatement ps1 = connection.prepareStatement(sql);
+			//với 
 			ps1.setString(1, status);
 			ps1.setString(2, result);
 			ps1.setString(3, fileTimeStamp);
@@ -194,6 +244,18 @@ public class ControlDB {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	public void truncateTable(Connection connection, String table_name) {
+		PreparedStatement statementTruncate;
+		try {
+			statementTruncate = connection.prepareStatement("TRUNCATE TABLE " + table_name);
+			statementTruncate.execute();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("TRUNCATED " + table_name);
 	}
 
 //	// Tao bang:
@@ -226,7 +288,6 @@ public class ControlDB {
 //		}
 //	}
 
-	// Sua:
 	// Phuong thuc loadInFile() load file vao trong table:
 	public int loadInFile(String sourceFile, String targetTable, String delimeter)
 			throws SQLException, ClassNotFoundException, NoSuchAlgorithmException, IOException {
