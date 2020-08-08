@@ -42,18 +42,20 @@ public class DataStaging {
 	public void setState(String state) {
 		this.state = state;
 	}
-
 	public void run(String idCongfig) {
 		int id = Integer.parseInt(idCongfig);
 		setConfig_id(id);
 		setState("OK");
 		DataProcess dp = new DataProcess();
 		ControlDB cdb = new ControlDB();
+		
+		
 		cdb.setConfig_db_name("controldata");
 		cdb.setTarget_db_name("stagingdata");
 		cdb.setTable_name("myconfig");
 		dp.setCdb(cdb);
 		try {
+			
 			extractToDB(dp);
 		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException | IOException e) {
 			// TODO Auto-generated catch block
@@ -88,6 +90,10 @@ public class DataStaging {
 			// Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
 			extention = file.getName().substring(file.getName().indexOf('.'));
 			System.out.println(extention);
+			
+			//truncate data exist
+			
+			
 			if (file.exists()) {
 				if (log.getStatus().equals("OK")) {
 					String values = "";

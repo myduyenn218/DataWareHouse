@@ -24,7 +24,8 @@ public class DownloadFileServer {
 		}
 	}
 
-	public void closeControlDB() throws SQLException {
+	public void closeControlDB() throws SQLException { 
+		
 		if (CONNECTION_CONTROLLDATA != null) {
 			CONNECTION_CONTROLLDATA.close();
 		}
@@ -66,13 +67,16 @@ public class DownloadFileServer {
 
 	public void run(String idConfig)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
+		// 1.connect controldata
 		openControlDB();
-
+		// 2. Select dữ liệu trong table myconfig:
 		String sql = "Select url_download, username_download, password_download, remote_file, path_file_local, type_file, format FROM myconfig WHERE id=?";
 		PreparedStatement p = CONNECTION_CONTROLLDATA.prepareStatement(sql);
 		p.setString(1, idConfig);
+//		3. Nhận được ResultSet chứa record thỏa yêu cầu truy xuất
 		ResultSet resultSet = p.executeQuery();
 		String url, remoteFile, location, username, password, typeFile, format;
+//		4. Duyệt ResultSet 
 		resultSet.next(); // đọc dòng đầu tiên
 
 		int id = Integer.parseInt(idConfig);
@@ -89,9 +93,10 @@ public class DownloadFileServer {
 		PreparedStatement pre = null;
 
 		SynologyNas nas = new SynologyNas(url, username, password);
-		// lấy ra từng file trong data trên server
+//		5. Kết nối Synology Nas: login() trong method list có kiểm tra login chưa. chưa login thì login
+//		6. Gọi hàm list(final String folder, final int offset, final int limit) trả về danh sách file trong folder
 		ArrayList<RemoteFile> filePaths = nas.list(remoteFile, 0, 0);
-
+//		7. Duyệt từng file
 		for (RemoteFile file : filePaths) {
 			String[] type_file = typeFile.split(",");
 			// tải những loại file mà database cho phép
@@ -111,6 +116,7 @@ public class DownloadFileServer {
 						Timestamp mTimeLocal = re.getTimestamp("time_download");
 						// đã tải rồi thì kiểm tra xem có cần cập nhật không bằng cách so sánh date time
 						if (mTimeLocal.before(new Timestamp(file.getModifyTime()))) {
+//							8. Download File: downloadFile(SynologyNas nas, String remotePath, String localPath) 
 							boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
 
 							if (isFileDownloaded) {
@@ -118,13 +124,14 @@ public class DownloadFileServer {
 							} else {
 								insertLog("Fails", id, "NotReadyTransfrom", file.getName());
 							}
-							System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(), file.getPath(),
-									file.isDir(), file.getModifyTime());
+							System.out.printf("Name: %s, Path: %s, isDir: %s, mTime: %s \n", file.getName(),
+									file.getPath(), file.isDir(), file.getModifyTime());
 //							System.out.println("SQL: " + sql);
 						}
 					} else {
 						boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
-
+//						9, Update, Insert Logs:
+//							insertLog(String status, int configId, String transform, String id)
 						if (isFileDownloaded) {
 							insertLog("OK", id, "NotReadyTransfrom", file.getName());
 						} else {
@@ -134,6 +141,8 @@ public class DownloadFileServer {
 								file.isDir(), file.getModifyTime());
 //						System.out.println("SQL: " + sql);
 					}
+//					10. Đóng tất cả kết nối:
+//						closeControlDB()
 					pre.close();
 				}
 

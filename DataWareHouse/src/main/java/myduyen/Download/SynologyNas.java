@@ -93,6 +93,7 @@ public class SynologyNas {
 
 	public ArrayList<RemoteFile> list(final String folder, int offset, final int limit, final String sortBy,
 			final String sortDirection) {
+//		5. Kết nối Synology Nas: login()
 		if (!isLoggedIn) {
 			if (!login()) {
 				return null;

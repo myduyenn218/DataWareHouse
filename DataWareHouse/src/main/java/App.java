@@ -27,33 +27,18 @@ public class App {
 		ses.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					//begin 1 process
-					p.insert(idConfig);
-					// download
-					
-					d.run(idConfig);
-					System.out.println("end");
-					
-					// extract
-					ex.run(idConfig);
+				//begin 1 process
+				p.insert(idConfig);
+				// download
+//					d.run(idConfig);
+				System.out.println("end");
+				
+				// extract
+				ex.run(idConfig);
 //					loader.connectDB();
 //					loader.copy("warehousedata", "sinhvien", "warehousedata", "sinhvien");
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
-		}, 0, 5, TimeUnit.MINUTES); // 5p 1 lần
+		}, 0, 1, TimeUnit.MINUTES); // 5p 1 lần
 
 	}
 }

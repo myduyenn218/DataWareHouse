@@ -25,4 +25,5 @@ public class CryptoHelper {
 		String result = new String(Hex.encodeHex(digest));
 		return result;
 	}
+	
 }

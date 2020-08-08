@@ -13,7 +13,7 @@ public class ProcessControlDB {
 
 		Connection connection;
 		int id = Integer.parseInt(idConfig);
-		String sql = "INSERT INTO process SET process_config_id=?";
+		String sql = "INSERT INTO process_config SET process_config_id=?";
 		try {
 			connection = OpenConnection.openConnectWithDBName("controldata");
 			PreparedStatement ps1 = connection.prepareStatement(sql);
