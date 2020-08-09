@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
+import com.sun.mail.iap.ConnectionException;
+
 import config.DBConnection;
 import config.OpenConnection;
 import config.ReadProperties;
@@ -55,7 +58,7 @@ public class DownloadFileServer {
 		}
 	}
 
-	private boolean downloadFile(SynologyNas nas, String remotePath, String localPath) {
+	private boolean downloadFile(SynologyNas nas, String remotePath, String localPath) throws ConnectionException {
 		try {
 			nas.download(remotePath, localPath);
 		} catch (LoginException e1) {
@@ -82,7 +85,7 @@ public class DownloadFileServer {
 		return false;
 	}
 
-	public void run(String idConfig) throws SQLException {
+	public void run(String idConfig) throws SQLException, ConnectionException, NumberFormatException, LoginException, ListFileException {
 		// 2. Mở kết nối tới Database Controldata:
 		try {
 			openControlDB();
@@ -121,14 +124,21 @@ public class DownloadFileServer {
 		ArrayList<RemoteFile> filePaths = null;
 		try {
 			filePaths = nas.list(remoteFile, 0, 0);
+		} catch (ConnectionException e) {
+			System.out.println(e.getMessage());
+			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Kết nối thất bại");
+			e.printStackTrace();
+			throw new ConnectionException();
 		} catch (LoginException e) {
 //			6.1 Gửi mail thông báo lỗi
 			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Đăng nhập thất bại!");
 			e.printStackTrace();
+			throw new LoginException();
 		} catch (ListFileException e) {
 
 			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Lấy ra danh sách file thất bại!");
 			e.printStackTrace();
+			throw new ListFileException();
 		}
 
 //		8. Duyệt từng file

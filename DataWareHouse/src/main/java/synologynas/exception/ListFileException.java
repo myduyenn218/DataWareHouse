@@ -5,4 +5,7 @@ public class ListFileException extends Throwable {
 		super(mess);
 	}
 
+	public ListFileException() {
+		// TODO Auto-generated constructor stub
+	}
 }

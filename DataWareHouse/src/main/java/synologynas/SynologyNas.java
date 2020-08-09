@@ -16,6 +16,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.sun.mail.iap.ConnectionException;
+
 import config.SendMail;
 import synologynas.exception.ListFileException;
 import synologynas.exception.LoginException;
@@ -67,7 +69,7 @@ public class SynologyNas {
 		return info;
 	}
 
-	private boolean login() throws LoginException {
+	private boolean login() throws LoginException, ConnectionException {
 		final String url = this.baseUrl + "/auth.cgi";
 		final LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
 		params.put("api", "SYNO.API.Auth");
@@ -78,11 +80,14 @@ public class SynologyNas {
 		params.put("passwd", password);
 		params.put("session", "FileStation");
 		params.put("format", "sid");
-
-		final Response response = getResponse(url, params);
+		Response response = null;
+		response = getResponse(url, params);
+		if (response == null) {
+			throw new ConnectionException();
+		}
 
 		if (response.isSuccess() == false) {
-			System.out.println();
+			System.out.println("Login fail");
 			throw new LoginException(response.getErrorCode() + "");
 		}
 
@@ -91,12 +96,13 @@ public class SynologyNas {
 		return isLoggedIn;
 	}
 
-	public ArrayList<RemoteFile> list(final String folder, final int offset, final int limit) throws LoginException, ListFileException {
+	public ArrayList<RemoteFile> list(final String folder, final int offset, final int limit)
+			throws LoginException, ListFileException, ConnectionException {
 		return list(folder, offset, limit, "name", "asc");
 	}
 
 	public ArrayList<RemoteFile> list(final String folder, int offset, final int limit, final String sortBy,
-			final String sortDirection) throws LoginException, ListFileException {
+			final String sortDirection) throws LoginException, ListFileException, ConnectionException {
 //		6. Kết nối Synology Nas: login() 
 		if (!isLoggedIn) {
 			if (!login()) {
@@ -148,7 +154,7 @@ public class SynologyNas {
 		return filePaths;
 	}
 
-	public String getMD5(String path) throws LoginException, MD5Exception {
+	public String getMD5(String path) throws LoginException, MD5Exception, ConnectionException {
 		if (!isLoggedIn) {
 			if (!login()) {
 				throw new LoginException();
@@ -207,7 +213,7 @@ public class SynologyNas {
 		return md5;
 	}
 
-	public boolean download(String remoteFile, String localFile) throws LoginException {
+	public boolean download(String remoteFile, String localFile) throws LoginException, ConnectionException {
 		if (!isLoggedIn) {
 			if (!login()) {
 				throw new LoginException();

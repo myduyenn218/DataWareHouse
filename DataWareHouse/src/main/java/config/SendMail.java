@@ -19,7 +19,6 @@ import javax.mail.internet.MimeMultipart;
 
 public class SendMail {
 	public static void sendMail(String subject, String codeError, String contentError) {
-
 		// 1) get the session object
 		Properties props = new Properties();
 		props.put("mail.smtp.auth", "true");
@@ -33,7 +32,6 @@ public class SendMail {
 				return new PasswordAuthentication(MailConfig.APP_EMAIL, MailConfig.APP_PASSWORD);
 			}
 		});
-
 		// 2) compose message
 		try {
 			MimeMessage message = new MimeMessage(session);
@@ -43,6 +41,9 @@ public class SendMail {
 
 			// 3) create MimeBodyPart object and set your message text
 			BodyPart messageBodyPart1 = new MimeBodyPart();
+			if (codeError == null) {
+				codeError = "";
+			}
 			messageBodyPart1.setText(codeError);
 
 			// 4) create new MimeBodyPart object and set DataHandler object to this object
