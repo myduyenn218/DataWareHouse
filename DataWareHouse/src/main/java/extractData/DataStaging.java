@@ -25,7 +25,7 @@ import dao.ControlDB;
 import dao.Log;
 
 public class DataStaging {
-	
+
 	private int config_id;
 	private String state;
 
@@ -51,25 +51,24 @@ public class DataStaging {
 
 	// khai báo để gọi sang chạy hệ thống
 	public void run(String idCongfig) {
-		
-		//1.KẾT NỐI VỚI CONTROLDATA
-		
+
+		// 1.KẾT NỐI VỚI CONTROLDATA
+
 		ControlDB cdb = new ControlDB();
-		
-		
+
 		cdb.setConfig_db_name("controldata");
-		//2. LẤY id_config TỪ BẢNG config
+		// 2. LẤY id_config TỪ BẢNG config
 		cdb.setTable_name("myconfig");
 		int id = Integer.parseInt(idCongfig);
 		setConfig_id(id);
-//		setState("OK");
+		setState("OK");
 		// Gọi lại lớp controlDB từ lớp DataProcess
 		DataProcess dp = new DataProcess();
 		dp.setCdb(cdb);
-		//3. KẾT NỐI DATA STAGING
+		// 3. KẾT NỐI DATA STAGING
 		cdb.setTarget_db_name("stagingdata");
 		try {
-			
+
 			extractToDB(dp);
 		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException | IOException e) {
 			// TODO Auto-generated catch block
@@ -77,11 +76,10 @@ public class DataStaging {
 		}
 	}
 
-	
 	public void extractToDB(DataProcess dp)
 			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		
-		// 4. LẤY CÁC DỮ LIỆU TỪ LOGS VÀ CONFIG 
+
+		// 4. LẤY CÁC DỮ LIỆU TỪ LOGS VÀ CONFIG
 		// list các config
 		List<Config> lstConf = dp.getCdb().loadAllConfs(this.config_id);
 		// Lấy các trường trong config
@@ -92,12 +90,13 @@ public class DataStaging {
 			String delim = ",";
 			String column_list = configuration.getFields();
 			System.out.println(target_table);
-			
+
 			// Lấy các các dòng ứng với status ứng với từng config;
 			Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
 
 			// Lấy config_name từ trong config ra
 			String file_name = log.getIdLog();
+			System.out.println(file_name);
 			// Đường dẫn dẫn tới file cần load
 			String sourceFile = import_dir + file_name;
 			// Đếm số trường trong fields trong bảng config
@@ -109,13 +108,13 @@ public class DataStaging {
 			// Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
 			extention = file.getName().substring(file.getName().indexOf('.'));
 			System.out.println(extention);
-			
-			//truncate data exist
-			
-			
+
+			// truncate data exist
+
 			// kiểm tra file có tồn tại hay không
 			if (file.exists()) {
 				// lấy file có status OK
+				System.out.println("status: " + log.getStatus());
 				if (log.getStatus().equals("OK")) {
 					String values = "";
 					// 5.ĐỌC FILE - Nếu file là .txt thì đọc file .txt
@@ -131,13 +130,14 @@ public class DataStaging {
 					}
 //					System.out.println(values);
 					// với dữ liệu không rỗng
+					String transform;
+					String status;
+					// set thời gian
+					String timestamp = getCurrentTime();
+					
 					if (values != null) {
 //						String table = "logs";
-						String transform;
-						String status;
 						int config_id = configuration.getIdConf();
-						// set thời gian
-						String timestamp = getCurrentTime();
 						// đếm số dòng
 //						String stagin_load_count = "";
 //						try {
@@ -148,30 +148,31 @@ public class DataStaging {
 //						}
 						//
 						Connection conn = OpenConnection.openConnectWithDBName("stagingdata");
-						if( dp.getCdb().checkTableExist(conn, target_table, "staging")==0) {
+						if (dp.getCdb().checkTableExist(conn, target_table, "stagingdata") == 0) {
 							System.out.println("Bảng không tồn tại");
-							// 6.3. thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK thành Not TR
-//							status = "Not TR";
+							// 6.3. thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK
+							// thành Not TR
+//							status = "Not TR";	
 //							transform = "FAIL";
 //							dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
 
-							
-							
-						}else {
-							//6. THỰC HIỆN GHI DỮ LIỆU VÀO STAGING 
+						} else {
+							// 6. THỰC HIỆN GHI DỮ LIỆU VÀO STAGING
 							// 6.2ghi dữ liệu vô bảng
-							if (dp.writeDataToBD(column_list, target_table, values)) {					
+							if (dp.writeDataToBD(column_list, target_table, values)) {
 								// nếu ghi được rồi
-								// 6.3. thì updateLog transform = NotReadyTransfrom thành OK, status = OK thành TR
+								// 6.3. thì updateLog transform = NotReadyTransfrom thành OK, status = OK thành
+								// TR
 								status = "TR";
 								transform = "OK";
 								dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
 //								target_dir = configuration.getSuccessDir();
 //								 if (moveFile(target_dir, file));
-								
+
 								// Nếu không ghi được
 							} else {
-								// 6.3. thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK thành Not TR
+								// 6.3. thì updateLog transform = NotReadyTransfrom thành FAIL, status = OK
+								// thành Not TR
 								status = "Not TR";
 								transform = "FAIL";
 								dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
@@ -179,7 +180,11 @@ public class DataStaging {
 							}
 						}
 
-						
+					} else {
+						status = "Not TR";
+						transform = "FAIL";
+						dp.getCdb().updateLogAfterLoadToStaging(status, transform, timestamp, file_name);
+
 					}
 				}
 

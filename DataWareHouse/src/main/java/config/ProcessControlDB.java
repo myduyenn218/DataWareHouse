@@ -1,23 +1,31 @@
 package config;
 
+import java.beans.Statement;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.mysql.cj.protocol.Resultset;
+
 import dao.Process;
 
 public class ProcessControlDB {
 
-	public void insert(String idConfig) {
+	public void insert_updateChildProcess(int process_id, String name, String status) {
 
 		Connection connection;
-		int id = Integer.parseInt(idConfig);
-		String sql = "INSERT INTO process_config SET process_config_id=?";
+
+		String sql = "INSERT INTO child_process (process_id, name, status ) VALUES (?,?,?) ON DUPLICATE KEY UPDATE status = ?";
 		try {
 			connection = OpenConnection.openConnectWithDBName("controldata");
 			PreparedStatement ps1 = connection.prepareStatement(sql);
-			ps1.setInt(1, id);
+			ps1.setInt(1, process_id);
+			ps1.setString(2, name);
+			ps1.setString(3, status);
+			ps1.setString(4, status);
 			ps1.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -33,17 +41,29 @@ public class ProcessControlDB {
 		}
 	}
 
-	public void update(String idConfig) {
+	public int insert_updateProcess(int processId, String stIdConfig, String status) {
 
 		Connection connection;
-		int id = Integer.parseInt(idConfig);
-		String sql = "INSERT INTO process SET idConfig=?, process_status=?";
+		int intIdConfig = Integer.parseInt(stIdConfig);
+
+		String sql = "INSERT INTO process (process_id, idConfig, status) VALUES (?,?,?) ON DUPLICATE KEY UPDATE  status=?";
 		try {
 			connection = OpenConnection.openConnectWithDBName("controldata");
-			PreparedStatement ps1 = connection.prepareStatement(sql);
-			ps1.setInt(1, id);
-			ps1.setString(2, "Start");
-			ps1.executeQuery();
+			PreparedStatement ps1 = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
+			if (processId == -1) {
+				ps1.setNull(1, java.sql.Types.INTEGER);
+			} else {
+				ps1.setInt(1, processId);
+			}
+			ps1.setInt(2, intIdConfig);
+			ps1.setString(3, status);
+			ps1.setString(4, status);
+			ps1.execute();
+			ResultSet re = ps1.getGeneratedKeys();
+			if (re.next()) {
+				return re.getInt(1);
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -56,6 +76,7 @@ public class ProcessControlDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return -1;
 	}
 
 }

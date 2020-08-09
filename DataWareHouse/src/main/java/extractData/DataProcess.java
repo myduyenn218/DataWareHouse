@@ -55,11 +55,12 @@ public class DataProcess {
 		String lines = "(";
 		for (int j = 0; j < countToken; j++) {
 			String token = stoken.nextToken();
-			// nếu kiểu dữ liệu là số thì sẽ bt  dạng (17130008,....)
+			// nếu kiểu dữ liệu là số thì sẽ bt dạng (17130008,....)
 			if (Pattern.matches(NUMBER_REGEX, token)) {
 				lines += (j == countToken - 1) ? token.trim() + ")," : token.trim() + ",";
 			} else {
-				// nếu kiểu dữ liệu không là số thì bỏ vào dấu nháy đơn dạng (17130008,'abc',...)
+				// nếu kiểu dữ liệu không là số thì bỏ vào dấu nháy đơn dạng
+				// (17130008,'abc',...)
 				lines += (j == countToken - 1) ? "'" + token.trim() + "')," : "'" + token.trim() + "',";
 			}
 			// dữ liệu trả về là chuỗi các dòng
@@ -73,6 +74,7 @@ public class DataProcess {
 	public String readValuesTXT(File s_file, int count_field) {
 		// Nếu không tồn tại file thì trả về null
 		if (!s_file.exists()) {
+			System.out.println("File not exist");
 			return null;
 		}
 		String values = "";
@@ -84,7 +86,7 @@ public class DataProcess {
 			// dữ liệu được cắt bởi dấu "\t"
 			if (line.indexOf("\t") != -1) {
 				delim = "\t";
-			}
+			} 
 			// Kiểm tra xem tổng số field trong file có đúng format hay không
 			// có 11 trường
 			if (new StringTokenizer(line, delim).countTokens() != (count_field + 1)) {
@@ -211,12 +213,12 @@ public class DataProcess {
 						break;
 					case BLANK:
 					default:
-						// kiểm tra lỗi file những dòng cuối cùng của file 
-						// 2 cột đầu cho dạng int 
+						// kiểm tra lỗi file những dòng cuối cùng của file
+						// 2 cột đầu cho dạng int
 						if (i < 2) {
 							value += (long) cell.getNumericCellValue() + delim;
 						} else
-							//còn lại là dạng chuỗi
+							// còn lại là dạng chuỗi
 							value += " " + delim;
 						break;
 					}
@@ -234,7 +236,6 @@ public class DataProcess {
 			return null;
 		}
 	}
-	
 
 	// Ghi dữ liệu vào data staging
 	public boolean writeDataToBD(String column_list, String target_table, String values) throws ClassNotFoundException {
