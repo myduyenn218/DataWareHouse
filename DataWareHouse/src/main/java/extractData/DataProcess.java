@@ -69,6 +69,37 @@ public class DataProcess {
 		}
 		return values;
 	}
+	
+	// Lay tat ca cac truong co trong staging:
+		public static ResultSet selectAllField(String db_name, String table_name) {
+			ResultSet rs = null;
+			Connection conn = null;
+			try {
+				// kết nối datastaging
+				conn = OpenConnection.openConnectWithDBName(db_name);
+				// selcet tất cả trường của staging
+				String selectConfig = "select * from " + table_name;
+				// thực hiện câu select
+				PreparedStatement ps = conn.prepareStatement(selectConfig);
+				// trả về resultset
+				return rs = ps.executeQuery();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			} finally {
+				try {
+					// kết quả rỗng thì kết thúc
+					if (rs != null)
+						rs.close();
+					// Không kết nối được cũng kết thúc
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 
 	// phương thức đọc file txt
 	public String readValuesTXT(File s_file, int count_field) {
@@ -119,36 +150,7 @@ public class DataProcess {
 		}
 	}
 
-	// Lay tat ca cac truong co trong staging:
-	public static ResultSet selectAllField(String db_name, String table_name) {
-		ResultSet rs = null;
-		Connection conn = null;
-		try {
-			// kết nối datastaging
-			conn = OpenConnection.openConnectWithDBName(db_name);
-			// selcet tất cả trường của staging
-			String selectConfig = "select * from " + table_name;
-			// thực hiện câu select
-			PreparedStatement ps = conn.prepareStatement(selectConfig);
-			// trả về resultset
-			return rs = ps.executeQuery();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			try {
-				// kết quả rỗng thì kết thúc
-				if (rs != null)
-					rs.close();
-				// Không kết nối được cũng kết thúc
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
+	
 
 	// Phương thức đọc dữ liệu trong file .xlsx:
 	public String readValuesXLSX(File s_file, int countField) {
@@ -184,25 +186,36 @@ public class DataProcess {
 					if (i == countField - 1) {
 						value += DataProcess.ACTIVE_DATE;
 					}
+					// nếu dữ liệu trống thì set nó NULL
 					Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 					CellType cellType = cell.getCellType();
+					// xét kiểu của ô dữ liệu
 					switch (cellType) {
+					// nếu là số
 					case NUMERIC:
+						// nếu là dạng Date
 						if (DateUtil.isCellDateFormatted(cell)) {
+							// thì đưa về dạng DATE_FORMAT
 							SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+							// đưa dữ liệu vào
 							value += dateFormat.format(cell.getDateCellValue()) + delim;
 						} else {
+							// còn nếu là dạng số bình thường thì tiếp tục đưa dữ liệu vào
 							value += (long) cell.getNumericCellValue() + delim;
 						}
 						break;
+					// nếu là dạng chuỗi
 					case STRING:
 						value += cell.getStringCellValue() + delim;
 						break;
+						// xủ lý công thức 
 					case FORMULA:
 						switch (cell.getCachedFormulaResultType()) {
+						// nếu trả về dạng số
 						case NUMERIC:
 							value += (long) cell.getNumericCellValue() + delim;
 							break;
+							// nếu trả về dạng chuỗi
 						case STRING:
 							value += cell.getStringCellValue() + delim;
 							break;

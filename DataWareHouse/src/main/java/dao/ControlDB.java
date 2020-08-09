@@ -207,6 +207,7 @@ public class ControlDB {
 				e.printStackTrace();
 			} finally {
 				try {
+					// khác null nghĩa là đã chạy rồi nên đóng kết nối
 					if (res != null) {
 						res.close();
 					}
@@ -215,7 +216,6 @@ public class ControlDB {
 					}
 
 				} catch (SQLException e) {
-					System.out.println("Khong the tao bang");
 					e.printStackTrace();
 				}
 			}
