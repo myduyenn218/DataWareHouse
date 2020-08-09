@@ -97,7 +97,7 @@ public class SynologyNas {
 
 	public ArrayList<RemoteFile> list(final String folder, int offset, final int limit, final String sortBy,
 			final String sortDirection) throws LoginException, ListFileException {
-//		5. Kết nối Synology Nas: login()
+//		6. Kết nối Synology Nas: login() 
 		if (!isLoggedIn) {
 			if (!login()) {
 				throw new LoginException();

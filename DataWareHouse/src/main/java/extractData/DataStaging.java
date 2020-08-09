@@ -89,14 +89,12 @@ public class DataStaging {
 			String import_dir = configuration.getPath_file_local();
 			String delim = ",";
 			String column_list = configuration.getFields();
-			System.out.println(target_table);
 
 			// Lấy các các dòng ứng với status ứng với từng config;
 			Log log = dp.getCdb().getLogsWithStatus(this.state, this.config_id);
 
 			// Lấy config_name từ trong config ra
 			String file_name = log.getIdLog();
-			System.out.println(file_name);
 			// Đường dẫn dẫn tới file cần load
 			String sourceFile = import_dir + file_name;
 			// Đếm số trường trong fields trong bảng config
@@ -107,8 +105,6 @@ public class DataStaging {
 			// System.out.println(file.exists());
 			// Lấy đuôi file ra xem đó là kiểu file gì để xử lí đọc file
 			extention = file.getName().substring(file.getName().indexOf('.'));
-			System.out.println(extention);
-
 			// truncate data exist
 
 			// kiểm tra file có tồn tại hay không

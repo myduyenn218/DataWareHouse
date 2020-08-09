@@ -14,19 +14,23 @@ import dao.Process;
 
 public class ProcessControlDB {
 
-	public void insert_updateChildProcess(int process_id, String name, String status) {
+	public int insert_updateChildProcess(int process_id, String name, String status) {
 
 		Connection connection;
 
 		String sql = "INSERT INTO child_process (process_id, name, status ) VALUES (?,?,?) ON DUPLICATE KEY UPDATE status = ?";
 		try {
 			connection = OpenConnection.openConnectWithDBName("controldata");
-			PreparedStatement ps1 = connection.prepareStatement(sql);
+			PreparedStatement ps1 = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
 			ps1.setInt(1, process_id);
 			ps1.setString(2, name);
 			ps1.setString(3, status);
 			ps1.setString(4, status);
-			ps1.executeUpdate();
+			ps1.execute();
+			ResultSet re = ps1.getGeneratedKeys();
+			if (re.next()) {
+				return re.getInt(1);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -39,6 +43,7 @@ public class ProcessControlDB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return -1;
 	}
 
 	public int insert_updateProcess(int processId, String stIdConfig, String status) {

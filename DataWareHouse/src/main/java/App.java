@@ -19,13 +19,17 @@ public class App {
 		int id = p.insert_updateProcess(-1, idConfig, "Start");
 		System.out.println(id);
 		// download
+		int idChildProcess = -1;
 //		try {
-//			p.insert_updateProcessConfig(idConfig, "StartDownload");
+////			1. Hệ thống được lập lịch chạy 1phút/lần chạy theo từng id myconfig nhận vào:
+////			insert process child => run(int idConfig)
+//			idChildProcess = p.insert_updateChildProcess(idChildProcess,idConfig, "StartDownload");
 //			d.run(idConfig);
-//			p.insert_updateProcessConfig(idConfig, "EndDownload");
+////			12. Update status process child
+//			p.insert_updateChildProcess(idChildProcess,idConfig, "EndDownload");
 //			System.out.println("end");
 //		} catch (Exception e) {
-//			p.insert_updateProcessConfig(idConfig, "ErrorDownload");
+//			p.insert_updateChildProcess(idChildProcess, idConfig, "ErrorDownload");
 //		}
 
 		// extract

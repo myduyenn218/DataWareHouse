@@ -82,18 +82,24 @@ public class DownloadFileServer {
 		return false;
 	}
 
-	public void run(String idConfig)
-			throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, IOException {
-		// 1.connect controldata
-		openControlDB();
+	public void run(String idConfig) throws SQLException {
+		// 2. Mở kết nối tới Database Controldata:
+		try {
+			openControlDB();
+		} catch (ClassNotFoundException | NoSuchAlgorithmException | SQLException | IOException e1) {
+//			2.1 Gửi mail thông báo lỗi
+			SendMail.sendMail("Thông tin debug data", e1.getMessage(), "Kết nối database thất bại!");
+			e1.printStackTrace();
+		}
 		// 2. Select dữ liệu trong table myconfig:
+//		url_download, username_download, password_download, remote_file, path_file_local, type_file, format theo id nhận vào 
 		String sql = "Select url_download, username_download, password_download, remote_file, path_file_local, type_file, format FROM myconfig WHERE id=?";
 		PreparedStatement p = CONNECTION_CONTROLLDATA.prepareStatement(sql);
 		p.setString(1, idConfig);
-//		3. Nhận được ResultSet chứa record thỏa yêu cầu truy xuất
+//		4. Nhận được ResultSet chứa record thỏa yêu cầu truy xuất
 		ResultSet resultSet = p.executeQuery();
 		String url, remoteFile, location, username, password, typeFile, format;
-//		4. Duyệt ResultSet 
+//		5. Duyệt ResultSet 
 		resultSet.next(); // đọc dòng đầu tiên
 
 		int id = Integer.parseInt(idConfig);
@@ -110,22 +116,22 @@ public class DownloadFileServer {
 		PreparedStatement pre = null;
 
 		SynologyNas nas = new SynologyNas(url, username, password);
-//		5. Kết nối Synology Nas: login() trong method list có kiểm tra login chưa. chưa login thì login
-//		6. Gọi hàm list(final String folder, final int offset, final int limit) trả về danh sách file trong folder
-
+//		6. Kết nối Synology Nas: login() trong method list có kiểm tra login chưa. chưa login thì login
+//		7. Gọi hàm list(final String folder, final int offset, final int limit) trả về danh sách file trong folder
 		ArrayList<RemoteFile> filePaths = null;
 		try {
 			filePaths = nas.list(remoteFile, 0, 0);
 		} catch (LoginException e) {
-//			Gửi thông báo lỗi về mail
+//			6.1 Gửi mail thông báo lỗi
 			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Đăng nhập thất bại!");
 			e.printStackTrace();
 		} catch (ListFileException e) {
+
 			SendMail.sendMail("Thông tin debug data", e.getMessage(), "Lấy ra danh sách file thất bại!");
 			e.printStackTrace();
 		}
 
-//		7. Duyệt từng file
+//		8. Duyệt từng file
 		for (RemoteFile file : filePaths) {
 			String[] type_file = typeFile.split(",");
 			// tải những loại file mà database cho phép
@@ -138,14 +144,14 @@ public class DownloadFileServer {
 					ResultSet re = pre.executeQuery();
 					re.last();
 
-					// kiểm tra file đó đã được tải chưa
+					// kiểm tra file đó đã được tải chưa: nếu querry có data là file đã được tải
 					if (re.getRow() == 1) {
 						re.beforeFirst();
 						re.first();
 						Timestamp mTimeLocal = re.getTimestamp("time_download");
 						// đã tải rồi thì kiểm tra xem có cần cập nhật không bằng cách so sánh date time
 						if (mTimeLocal.before(new Timestamp(file.getModifyTime()))) {
-//							8. Download File: downloadFile(SynologyNas nas, String remotePath, String localPath) 
+//							9. Download File: downloadFile(SynologyNas nas, String remotePath, String localPath) 
 							boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
 
 							if (isFileDownloaded) {
@@ -159,7 +165,7 @@ public class DownloadFileServer {
 						}
 					} else {
 						boolean isFileDownloaded = downloadFile(nas, file.getPath(), location + file.getName());
-//						9, Update, Insert Logs:
+//						10, Update, Insert Logs:
 //							insertLog(String status, int configId, String transform, String id)
 						if (isFileDownloaded) {
 							insertLog("OK", id, "NotReadyTransfrom", file.getName());
@@ -170,7 +176,7 @@ public class DownloadFileServer {
 								file.isDir(), file.getModifyTime());
 //						System.out.println("SQL: " + sql);
 					}
-//					10. Đóng tất cả kết nối:
+//					11. Đóng tất cả kết nối:
 //						closeControlDB()
 					pre.close();
 				}
@@ -180,6 +186,5 @@ public class DownloadFileServer {
 		}
 //		closeControlDB(); bug sql khoong dongs duocjw
 	}
-
 
 }
